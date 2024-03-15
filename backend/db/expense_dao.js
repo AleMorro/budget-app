@@ -30,7 +30,7 @@ exports.getAllExpenses = function() {
 
 exports.addExpense = function(expense) {
    return new Promise((resolve,reject) => {
-   const sql = "INSERT INTO expenses(user_id, category, date, description, amount) VALUES (?, DATE(?), ?, ?)";
+   const sql = "INSERT INTO expenses(user_id, category, date, description, amount) VALUES (?, ?, DATE(?), ?, ?)";
       db.run(sql, [expense.user_id,expense.category,expense.date,expense.description,expense.amount], (err)=> {
           if (err) {
               reject(err);

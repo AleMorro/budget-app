@@ -19,23 +19,27 @@ const PORT = 3000;
 
 // set up the middlewares
 app.use(morgan('tiny'));
-app.use(express.static('client'));
+app.use(express.static(path.join(__dirname, '../frontend')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cors())
 
 // interpreting json-encoded parameters
 app.use(express.json());
+// redirecting to index.html
+app.get("/main", (req,res) => {
+   res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 // REST API
 
 // Testing API to verify functionability
 
 // GET
-
+/*
 app.get('/', (req, res) => {
    res.send('Hello world')
-});
+}); */
 
 app.get('/api/incomes', (req, res) => {
    incomeDao.getAllIncomes()
