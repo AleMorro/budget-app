@@ -2,6 +2,8 @@
 
 const db = require('./db.js');
 
+// GET functions
+
 exports.getAllIncomes = function() {
    return new Promise((resolve, reject) => {
       const query = 'SELECT * FROM incomes';
@@ -14,6 +16,7 @@ exports.getAllIncomes = function() {
             {
                id:row.id,
                user_id:row.user_id,
+               category:row.category,
                date:row.date,
                description:row.description,
                amount:row.amount
@@ -22,5 +25,7 @@ exports.getAllIncomes = function() {
       });
    });
 }
+
+// POST functions
 
 

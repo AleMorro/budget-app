@@ -10,6 +10,8 @@ const path = require('path');
 
 const {check, validationResult} = require('express-validator');
 const db = require('./db/db');
+const exp = require('constants');
+const { error } = require('console');
 
 // init
 const app = express();
@@ -27,6 +29,10 @@ app.use(express.json());
 
 // REST API
 
+// Testing API to verify functionability
+
+// GET
+
 app.get('/', (req, res) => {
    res.send('Hello world')
 });
@@ -36,6 +42,35 @@ app.get('/api/incomes', (req, res) => {
       .then(incomes => res.json(incomes))
       .catch(error => res.status(500).json({ error: error.message }));
 });
+
+app.get('/api/expenses', (req, res) => {
+   expenseDao.getAllExpenses()
+      .then(expenses => res.json(expenses))
+      .catch(error => res.status(500).json({ error: error.message}));
+})
+
+app.get('/api/users', (req, res) => {
+   userDao.getAllUsers()
+      .then(users => res.json(users))
+      .catch(error => res.status(500).json({ error: error.message}));
+})
+
+// POST
+
+app.post('/api/addExpense', /* [add here some validity checks], */ (req, res) => {
+   const expense = {
+     user_id: req.body.user_id,
+     category: req.body.category,
+     date: req.body.date,
+     description: req.body.description,
+     amount: req.body.amount
+   };
+
+   expenseDao.addExpense(expense)
+   .then((result) => res.status(201).header('Location', `/expenses/${result}`).end())
+   .catch((err) => res.status(503).json({error: err.message}));
+});
+
 
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)
