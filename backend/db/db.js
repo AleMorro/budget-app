@@ -2,7 +2,7 @@
 
 const sqlite = require('sqlite3');
 
-const db = new sqlite.Database('db/dbBudget.db', (err) => {
+const db = new sqlite.Database('./db/dbBudget.db', (err) => {
    if (err){
       console.log('Error opening Database', err.message);
       throw err;
