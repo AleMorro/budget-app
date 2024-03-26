@@ -1,7 +1,9 @@
 import React from "react";
-import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
+import * as Fa6Icons from "react-icons/fa6";
+import * as TbIcons from "react-icons/tb";
+import * as CiIcons from "react-icons/ci";
 
 export const SidebarData = [
   {
@@ -11,33 +13,33 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Reports",
-    path: "/reports",
+    title: "Expenses",
+    path: "/expenses",
     icon: <IoIcons.IoIosPaper />,
     cName: "nav-text",
   },
   {
-    title: "Products",
-    path: "/products",
-    icon: <FaIcons.FaCartPlus />,
+    title: "Incomes",
+    path: "/incomes",
+    icon: <Fa6Icons.FaMoneyBillTransfer />,
     cName: "nav-text",
   },
   {
-    title: "Team",
-    path: "/team",
-    icon: <IoIcons.IoMdPeople />,
+    title: "Budget",
+    path: "/budget",
+    icon: <TbIcons.TbMoneybag />,
     cName: "nav-text",
   },
   {
-    title: "Messages",
-    path: "/messages",
-    icon: <FaIcons.FaEnvelopeOpenText />,
+    title: "Cashflow",
+    path: "/cashflow",
+    icon: <TbIcons.TbZoomMoney />,
     cName: "nav-text",
   },
   {
-    title: "Support",
-    path: "/support",
-    icon: <IoIcons.IoMdHelpCircle />,
+    title: "Logout",
+    path: "/logout",
+    icon: <CiIcons.CiLogout />,
     cName: "nav-text",
   },
 ];

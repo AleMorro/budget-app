@@ -8,14 +8,16 @@
 }
 
 .home,
-.reports,
-.products {
+.expenses,
+.incomes,
+.budget,
+.cashflow {
   display: flex;
   height: 90vh;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
-  background-color: #000;
+  background-color: #e2c0c0;
   color: #fff;
 }
 

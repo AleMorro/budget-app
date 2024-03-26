@@ -1,26 +1,3 @@
-/**
-import TestingUser from './components/TestingUser';
-import TestRBoot from './components/TestRBoot'
-import Orb from './components/Orb';
-import Sidebar from './components/Sidebar';
-import './App.css'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-
-
-
-function App() {
-
-   return(
-      <>
-         <Orb/>
-         
-      </>
-      
-   )
-   
-}
-*/
-
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -30,10 +7,13 @@ import {
    Link,
    Outlet,
 } from 'react-router-dom';
-import Products from "./routes/Products"
-import Home from "./routes/Home"
-import Reports from "./routes/Reports"
 import Sidebar from "./components/Sidebar";
+
+import Home from "./routes/Home";
+import Expenses from "./routes/Expenses";
+import Incomes from "./routes/Incomes";
+import Budget from "./routes/Budget";
+import Cashflow from "./routes/Cashflow";
 
 const AppLayout = () => (
    <>
@@ -42,6 +22,7 @@ const AppLayout = () => (
    </>
 )
 
+// Creates a routes to provide different element in the same page
 const router = createBrowserRouter([
    {
       element: <AppLayout />,
@@ -51,19 +32,28 @@ const router = createBrowserRouter([
             element: <Home />
          },
          {
-            path: "products",
-            element: <Products />
+            path: "expenses",
+            element: <Expenses />
          },
          {
-            path: "reports",
-            element: <Reports />
+            path: "incomes",
+            element: <Incomes />
+         },
+         {
+            path: "budget",
+            element: <Budget />
+         },
+         {
+            path: "cashflow",
+            element: <Cashflow />
          },
       ],
    },
 ]);
 
+// Export App function to router in index.js
 export default function App() {
    return(
-      <RouterProvider router={router} fallbackElement={<p>Initial load...</p>}/>
+      <RouterProvider router={router} />
    )
 }
