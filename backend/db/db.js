@@ -1,6 +1,7 @@
 'use strict';
 
 const sqlite = require('sqlite3');
+// Function to connect sqlite database
 
 const db = new sqlite.Database('./db/dbBudget.db', (err) => {
    if (err){

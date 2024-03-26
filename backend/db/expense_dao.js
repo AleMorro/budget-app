@@ -12,6 +12,7 @@ exports.getAllExpenses = function() {
             reject(err);
             return;
          }
+         // crea un oggetto per ogni riga della tabella
          const expenses = rows.map( (row)=> (
             {
                id:row.id,

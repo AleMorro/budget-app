@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGlobalContext } from '../context/globalContext';
-import './TestingUser.css';
+import '../styles/TestingUser.css';
 
 function TestingUser() {
    const { getUsers, users, error } = useGlobalContext();

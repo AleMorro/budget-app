@@ -1,10 +1,15 @@
 import TestingUser from './components/TestingUser';
-import './App.css';
+import TestRBoot from './components/TestRBoot'
+import Orb from './components/Orb';
+import './App.css'
 
 function App() {
 
    return(
-      <TestingUser/>
+      <div className='app'>
+         <Orb/>
+      </div>
+      
    )
    
 }
