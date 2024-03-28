@@ -1,0 +1,54 @@
+/**
+# Header Nav
+**/
+.header-nav ul {
+   list-style: none;
+}
+
+.header-nav > ul {
+   margin: 0;
+   padding: 0;
+}
+
+.header-nav .nav-icon {
+   font-size: 22px;
+   color: #012970;
+   margin-right: 25px;
+   position: relative;
+}
+
+.header-nav .nav-profile {
+   color: #012970;
+   max-height: 36px;
+}
+
+.header-nav .nav-profile span {
+   font-size: 14px;
+   font-weight: 600;
+}
+
+i {
+   margin: 0 20px 0 5px;
+   font-size: 20px;
+}
+
+.header-nav .profile {
+   min-width: 240px;
+   top: 8px !important;
+}
+
+.header-nav .profile .dropdown-header h6{
+   font-size: 18px;
+   margin-bottom: 0;
+   font-weight: 600;
+   color: #444444;
+}
+
+.header #icon-profile {
+   font-size: 32px;
+   padding-left: 10px;
+   cursor: pointer;
+   color: #012970;
+}
+
+

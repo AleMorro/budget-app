@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import { IconContext } from "react-icons";
 
-import "../styles/Sidebar.css"
+// import "../styles/Sidebar.css"
 
 function Sidebar() {
 

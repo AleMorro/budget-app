@@ -7,7 +7,6 @@ import {
    Link,
    Outlet,
 } from 'react-router-dom';
-import Sidebar from "./components/Sidebar";
 
 import Home from "./routes/Home";
 import Expenses from "./routes/Expenses";
@@ -15,9 +14,18 @@ import Incomes from "./routes/Incomes";
 import Budget from "./routes/Budget";
 import Cashflow from "./routes/Cashflow";
 
+import Header from "./components/Header";
+
+// import Icons
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'remixicon/fonts/remixicon.css'
+
+// import Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.min.js'
+
 const AppLayout = () => (
    <>
-   <Sidebar/>
    <Outlet />
    </>
 )
@@ -29,7 +37,7 @@ const router = createBrowserRouter([
       children: [
          {
             path: "/",
-            element: <Home />
+            element: <Header />
          },
          {
             path: "expenses",
