@@ -23,10 +23,14 @@ import 'remixicon/fonts/remixicon.css'
 // import Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
+import Sidebar from "./components/Sidebar";
+import Main from "./components/Main";
 
 const AppLayout = () => (
    <>
-   <Outlet />
+      <Header />
+      <Sidebar />
+      <Outlet />
    </>
 )
 
@@ -37,7 +41,7 @@ const router = createBrowserRouter([
       children: [
          {
             path: "/",
-            element: <Header />
+            element: <Main />
          },
          {
             path: "expenses",

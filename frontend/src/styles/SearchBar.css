@@ -1,6 +1,7 @@
 .header .search-bar {
-   min-width: 260px;
+   min-width: 400px;
    padding: 0 20px;
+   margin: auto;
 }
 
 @media (max-width: 1199px) {

@@ -4,7 +4,7 @@
 
 @media (min-width: 1200px) {
    .logo {
-      width: 280px;
+      width: 200px;
    }
 }
 
@@ -18,4 +18,5 @@
    font-weight: 700;
    color: #012970;
    font-family: 'Nunito', sans-serif;
+   text-decoration: none;
 }
