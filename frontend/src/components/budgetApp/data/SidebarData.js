@@ -8,31 +8,31 @@ import * as CiIcons from "react-icons/ci";
 export const SidebarData = [
   {
     title: "Home",
-    path: "/",
+    path: "/app",
     icon: <AiIcons.AiFillHome />,
     cName: "nav-item",
   },
   {
     title: "Expenses",
-    path: "/expenses",
+    path: "/app/expenses",
     icon: <IoIcons.IoIosPaper />,
     cName: "nav-item",
   },
   {
     title: "Incomes",
-    path: "/incomes",
+    path: "/app/incomes",
     icon: <Fa6Icons.FaMoneyBillTransfer />,
     cName: "nav-item",
   },
   {
     title: "Budget",
-    path: "/budget",
+    path: "/app/budget",
     icon: <TbIcons.TbMoneybag />,
     cName: "nav-item",
   },
   {
     title: "Cashflow",
-    path: "/cashflow",
+    path: "/app/cashflow",
     icon: <TbIcons.TbZoomMoney />,
     cName: "nav-item",
   },

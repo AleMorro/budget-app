@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import * as FaIcons from "react-icons/fa";
-import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { SidebarData } from "../data/SidebarData";
+import { SidebarData } from "./data/SidebarData";
 import { IconContext } from "react-icons";
 
-import "../styles/Sidebar.css"
+import "./styles/Sidebar.css"
 
 function Sidebar() {
 

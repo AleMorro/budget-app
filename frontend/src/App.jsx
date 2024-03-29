@@ -1,71 +1,45 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
-import {
-   createBrowserRouter,
-   RouterProvider,
-   Router,
-   Link,
-   Outlet,
-} from 'react-router-dom';
-
-import Home from "./routes/Home";
-import Expenses from "./routes/Expenses";
-import Incomes from "./routes/Incomes";
-import Budget from "./routes/Budget";
-import Cashflow from "./routes/Cashflow";
-
-import Header from "./components/Header";
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import Icons
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'remixicon/fonts/remixicon.css'
-
 // import Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
-import Sidebar from "./components/Sidebar";
-import Main from "./components/Main";
+// import components
+import LandingPage from "./components/landingPage/LandingPage"
+import Login from "./components/login/Login"
+import AppLayout from "./components/budgetApp/AppLayout";
+import Home from "./components/budgetApp/routes/Home";
+import Expenses from "./components/budgetApp/routes/Expenses";
+import Incomes from "./components/budgetApp/routes/Incomes";
+import Budget from "./components/budgetApp/routes/Budget";
+import Cashflow from "./components/budgetApp/routes/Cashflow";
 
-const AppLayout = () => (
-   <>
-      <Header />
-      <Sidebar />
-      <Outlet />
-   </>
-)
+// import stylesheet
+import "./App.css"
 
-// Creates a routes to provide different element in the same page
-const router = createBrowserRouter([
-   {
-      element: <AppLayout />,
-      children: [
-         {
-            path: "/",
-            element: <Main />
-         },
-         {
-            path: "expenses",
-            element: <Expenses />
-         },
-         {
-            path: "incomes",
-            element: <Incomes />
-         },
-         {
-            path: "budget",
-            element: <Budget />
-         },
-         {
-            path: "cashflow",
-            element: <Cashflow />
-         },
-      ],
-   },
-]);
+function App() {
 
-// Export App function to router in index.js
-export default function App() {
-   return(
-      <RouterProvider router={router} />
-   )
+  return (
+    <BrowserRouter>
+
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/app/*" element={<AppLayout />} />
+      </Routes>
+
+      <Routes>
+         <Route path='/app' element = {<Home />}/>
+         <Route path='/app/expenses' element = {<Expenses />}/>
+         <Route path='/app/incomes' element = {<Incomes />}/>
+         <Route path='/app/budget' element = {<Budget />}/>
+         <Route path='/app/cashflow' element = {<Cashflow />}/>
+      </Routes>
+      
+    </BrowserRouter>
+  );
 }
+
+export default App;

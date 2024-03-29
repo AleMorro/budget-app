@@ -11,8 +11,6 @@
 }
 
 * {
-   margin: 0;
-   padding: 0;
    box-sizing: border-box;
    text-decoration: none;
 }
@@ -24,7 +22,6 @@ body {
 }
 
 a {
-   color: var(--primary);
    text-decoration: none;
    cursor: pointer;
 }
@@ -49,7 +46,7 @@ h6 {
 /* Dropdowns menus */
 .dropdown-menu {
    border-radius: 4px;
-   padding: 10px 0;
+   padding: 0;
    -webkit-animation-name: dropdown-animate;
    animation-name: dropdown-animate;
    -webkit-animation-duration: 0.2s;

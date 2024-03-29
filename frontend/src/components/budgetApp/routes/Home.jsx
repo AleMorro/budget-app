@@ -1,12 +1,13 @@
 import React from "react";
-// import TestingUser from "../components/TestingUser";
+
+import '../styles/Main.css'
 
 function Home() {
 
    return(
-      <div className="home">
+      <main id='main' className='main'>
          <h1>Home</h1>
-      </div>
+      </main>
    )
 }
 
