@@ -1,11 +1,13 @@
 import React from "react";
 
+import '../styles/Main.css'
+
 function Cashflow() {
 
    return(
-      <div className="cashflow">
+      <main id='main' className='main'>
          <h1>Cashflow</h1>
-      </div>
+      </main>
    )
 }
 

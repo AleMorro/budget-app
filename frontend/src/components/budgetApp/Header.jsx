@@ -1,9 +1,10 @@
 import React from 'react'
-import '../styles/Header.css'
-
+// import components
 import Logo from './Logo'
 import SearchBar from './SearchBar'
 import Nav from './Nav'
+
+import './styles/Header.css'
 
 function Header() {
    return (

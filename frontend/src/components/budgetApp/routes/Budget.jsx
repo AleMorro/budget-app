@@ -1,11 +1,13 @@
 import React from "react";
 
+import '../styles/Main.css'
+
 function Budget() {
 
    return(
-      <div className="budget">
+      <main id='main' className='main'>
          <h1>Budget</h1>
-      </div>
+      </main>
    )
 }
 
