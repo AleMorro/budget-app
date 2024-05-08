@@ -4,10 +4,15 @@ const db = require('./db.js');
 
 // GET functions
 
-exports.getAllIncomes = function() {
+/**
+ * Get method to fetch incomes by user id
+ * @param {*} id 
+ * @returns json reponse
+ */
+exports.getAllIncomes = function(id) {
    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM incomes';
-      db.all(query, (err, rows) => {
+      const query = 'SELECT * FROM incomes WHERE incomes.user_id=?';
+      db.all(query, [id], (err, rows) => {
          if (err) {
             reject(err);
             return;
@@ -27,5 +32,22 @@ exports.getAllIncomes = function() {
 }
 
 // POST functions
+
+/**
+ * Post method to add an income
+ * @param {*} income 
+ */
+exports.addIncome = function(income) {
+   return new Promise((resolve,reject) => {
+   const sql = "INSERT INTO incomes(user_id, category, date, description, amount) VALUES (?, ?, DATE(?), ?, ?)";
+      db.run(sql, [income.user_id,income.category,income.date,income.description,income.amount], (err)=> {
+          if (err) {
+              reject(err);
+              return;
+          }
+          resolve(this.lastId);
+      });
+  });
+} 
 
 

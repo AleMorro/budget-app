@@ -4,10 +4,15 @@ const db = require('./db.js');
 
 // GET functions
 
-exports.getAllExpenses = function() {
+/**
+ * Get method to fetch expenses by user id
+ * @param {*} id 
+ * @returns json response
+ */
+exports.getAllExpenses = function(id) {
    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM expenses';
-      db.all(query, (err, rows) => {
+      const query = 'SELECT * FROM expenses WHERE expenses.user_id=?';
+      db.all(query, [id], (err, rows) => {
          if (err) {
             reject(err);
             return;
@@ -29,6 +34,10 @@ exports.getAllExpenses = function() {
 
 // POST functions
 
+/**
+ * Post method to add an expense
+ * @param {*} expense 
+ */
 exports.addExpense = function(expense) {
    return new Promise((resolve,reject) => {
    const sql = "INSERT INTO expenses(user_id, category, date, description, amount) VALUES (?, ?, DATE(?), ?, ?)";

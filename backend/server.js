@@ -32,24 +32,27 @@ app.use(express.json());
 // Testing API to verify functionability
 
 // GET
+/*
 const names = ['James', 'John', 'Jeff', 'Jim']
 
 app.get('/test', (req, res) => {
    res.json(names)
 })
+*/
 
-app.get('/api/incomes', (req, res) => {
-   incomeDao.getAllIncomes()
+// get all incomes by id
+app.get('/api/incomes/:id', (req, res) => {
+   incomeDao.getAllIncomes(req.params.id)
       .then(incomes => res.json(incomes))
       .catch(error => res.status(500).json({ error: error.message }));
 });
-
-app.get('/api/expenses', (req, res) => {
-   expenseDao.getAllExpenses()
+// get all expenses by id
+app.get('/api/expenses/:id', (req, res) => {
+   expenseDao.getAllExpenses(req.params.id)
       .then(expenses => res.json(expenses))
       .catch(error => res.status(500).json({ error: error.message}));
 })
-
+// get all users
 app.get('/api/users', (req, res) => {
    userDao.getAllUsers()
       .then(users => res.json(users))
@@ -58,6 +61,7 @@ app.get('/api/users', (req, res) => {
 
 // POST
 
+// post a expense
 app.post('/api/addExpense', /* [add here some validity checks], */ (req, res) => {
    const expense = {
      user_id: req.body.user_id,
@@ -72,6 +76,20 @@ app.post('/api/addExpense', /* [add here some validity checks], */ (req, res) =>
    .catch((err) => res.status(503).json({error: err.message}));
 });
 
+// post a income
+app.post('/api/addIncome', /* [add here some validity checks], */ (req, res) => {
+   const income = {
+     user_id: req.body.user_id,
+     category: req.body.category,
+     date: req.body.date,
+     description: req.body.description,
+     amount: req.body.amount
+   };
+
+   incomeDao.addIncome(income)
+   .then((result) => res.status(201).header('Location', `/incomes/${result}`).end())
+   .catch((err) => res.status(503).json({error: err.message}));
+});
 
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)

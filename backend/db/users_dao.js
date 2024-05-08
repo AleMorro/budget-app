@@ -4,6 +4,10 @@ const db = require('./db.js');
 
 // GET functions
 
+/**
+ * Get method to fetch all the users data
+ * @returns user json response
+ */
 exports.getAllUsers = function() {
    return new Promise((resolve, reject) => {
       const query = 'SELECT * FROM users';

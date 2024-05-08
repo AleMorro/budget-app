@@ -1,12 +1,14 @@
 import React from "react";
 
-import '../styles/Main.css'
+import PageTitle from "../PageTitle";
+
+import '../../styles/Main.css';
 
 function Budget() {
 
    return(
       <main id='main' className='main'>
-         <h1>Budget</h1>
+         <PageTitle page="Budget"/>
       </main>
    )
 }

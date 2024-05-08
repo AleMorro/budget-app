@@ -1,0 +1,23 @@
+/**
+# PageTitle
+**/
+
+.pagetitle {
+   margin-bottom: 10px;
+}
+
+.pagetitle {
+   font-size: 24px;
+   margin-bottom: 0;
+   font-weight: 600;
+   color: #012970;
+}
+
+.breadcrumb-item {
+   text-align: center;
+}
+
+.icon {
+   display:block;
+   margin-top: 2px;
+}

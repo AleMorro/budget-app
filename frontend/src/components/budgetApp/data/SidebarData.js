@@ -30,7 +30,7 @@ export const SidebarData = [
     cName: "nav-item",
   },
   {
-    title: "Cashflow",
+    title: "Wallets",
     path: "/app/cashflow",
     icon: <TbIcons.TbZoomMoney />,
     cName: "nav-item",
