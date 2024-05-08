@@ -10,11 +10,11 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import LandingPage from "./components/landingPage/LandingPage"
 import Login from "./components/login/Login"
 import AppLayout from "./components/budgetApp/AppLayout";
-import Home from "./components/budgetApp/routes/Home";
-import Expenses from "./components/budgetApp/routes/Expenses";
-import Incomes from "./components/budgetApp/routes/Incomes";
-import Budget from "./components/budgetApp/routes/Budget";
-import Cashflow from "./components/budgetApp/routes/Cashflow";
+import Home from "./components/budgetApp/routes/Home/Home";
+import Expenses from "./components/budgetApp/routes/Expenses/Expenses";
+import Incomes from "./components/budgetApp/routes/Incomes/Incomes";
+import Budget from "./components/budgetApp/routes/Budget/Budget";
+import Cashflow from "./components/budgetApp/routes/Wallets/Wallets";
 
 // import stylesheet
 import "./App.css"
