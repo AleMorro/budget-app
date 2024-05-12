@@ -28,8 +28,11 @@
 }
 
 i {
-   margin: 0 10px 0 5px;
    font-size: 20px;
+}
+
+#icon-profile {
+   margin: 0 10px 0 5px;;
 }
 
 .header-nav .profile {
