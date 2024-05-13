@@ -29,16 +29,7 @@ app.use(express.json());
 
 // REST API
 
-// Testing API to verify functionability
-
 // GET
-/*
-const names = ['James', 'John', 'Jeff', 'Jim']
-
-app.get('/test', (req, res) => {
-   res.json(names)
-})
-*/
 
 // get all incomes by id
 app.get('/api/incomes/:id', (req, res) => {
@@ -91,6 +82,7 @@ app.post('/api/addIncome', /* [add here some validity checks], */ (req, res) => 
    .catch((err) => res.status(503).json({error: err.message}));
 });
 
+// Check if the server is connected
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)
 });
