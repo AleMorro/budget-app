@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { useGlobalContext } from '../../../../context/globalContext';
+import { GlobalProvider, useGlobalContext } from '../../../../context/globalContext';
 
 import CardFilter from './CardFilter';
 
@@ -8,26 +8,43 @@ import '../../styles/Card.css'
 
 function Card( {card} ) {
 
-   const { getIncomes, totalIncomes, totalBalance } = useGlobalContext()
+   const { getIncomes, totalIncomes, incomesByFilter,
+           getExpenses, totalExpenses,
+           totalBalance } = useGlobalContext()
    
    const [filter, setFilter] = useState("Today");
 
    const handleFilterChange = filter => {
       setFilter(filter);
       if(filter === 'Today') {
+         console.log("Fetch")
          getIncomes(1)
-            .then(totalIncomes())
+            .then(getExpenses(1))
             .catch(error => {
                console.error('Error fetching incomes: ', error)
             })
       }
       else if(filter === 'This Month') {
-
+         // to implement filter function
       }
       else {
+         // to implement filter function
+      }
+   }
 
+   const renderData = () => {
+      switch (card.name) {
+         case 'Incomes':
+            return '$' + incomesByFilter('today').toLocaleString('en-US');
+         case 'Expenses':
+            return '$' + totalExpenses().toLocaleString('en-US');
+         case 'Balance':
+            return '$' + 1200; // Assuming data is the balance
+         default:
+            return 'Nulla';
       }
    };
+
 
    return (
       <div className="col-xxl-4 col-md-4">
@@ -44,10 +61,9 @@ function Card( {card} ) {
             </div>
          <div className="ps-3">
             <h6>
-               {card.name === 'Incomes'
-                  ? '$' + totalIncomes().toLocaleString('en-US')
-                  : 1200.0.toLocaleString('en-US')}
-            </h6>
+               {renderData()} 
+            </h6> 
+            
             <span
                className={`${
                   0.15 > 0 ? 'text-success': 'text-danger'

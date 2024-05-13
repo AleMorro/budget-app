@@ -13,7 +13,7 @@ function Dashboard() {
    return (
       <section className="dashboard section">
          <div className="row">
-            <div className="col-lg-8">
+            <div className="col-lg-12">
                <div className="row">
                   { 
                      CardsData.map(card => <Card key={card.id} card={card} />)

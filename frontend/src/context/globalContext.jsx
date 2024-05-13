@@ -16,7 +16,10 @@ export const GlobalProvider = ({ children }) => {
    const[expenses, setExpenses] = useState([])
    const[error, setError] = useState(null)
 
-   // calculate expenses
+   /************ 
+    * EXPENSES
+   *************/
+
    const addExpense = async(expense) => {
       const res = await axios.post(`${BASE_URL}addExpense`, expense)
          .catch((err) => {
@@ -26,7 +29,7 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const getExpenses = async (user_id) => {
-      const res = await axios.get(`${BASE_URL}expenses/?id=${user_id}`)
+      const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
       setExpenses(res.data)
       console.log(res.data)
    }
@@ -38,11 +41,13 @@ export const GlobalProvider = ({ children }) => {
       expenses.forEach((expense) => {
          total += expense.amount
       })
-
+      console.log("Total expenses: " + total)
       return total;
    }
 
-   // calculate incomes
+   /************ 
+    * INCOMES
+   *************/
    const addIncome = async(income) => {
       const res = await axios.post(`${BASE_URL}addExpense`, income)
          .catch((err) => {
@@ -63,6 +68,17 @@ export const GlobalProvider = ({ children }) => {
       }
    }
 
+   const incomesByFilter = (filter) => {
+      console.log("Filter functions")
+      const filteredIncomes = incomes.filter(inc => inc.amount > 1000)
+      let total = 0;
+      filteredIncomes.forEach((income) => {
+         total += income.amount
+      })
+      console.log("Total incomes filter: " + total)
+      return total;
+   }
+
    // to implement: deleteIncome
 
    const totalIncomes = () => {
@@ -74,7 +90,9 @@ export const GlobalProvider = ({ children }) => {
       return total;
    }
 
-   // calculate the total balance
+   /************ 
+    * GENERAL
+   *************/
    const totalBalance = () => {
       return totalIncomes() - totalExpenses()
    }
@@ -102,7 +120,8 @@ export const GlobalProvider = ({ children }) => {
          totalIncomes,
          totalBalance,
          error,
-         setError
+         setError,
+         incomesByFilter
       }}>
          {children}
       </GlobalContext.Provider>
