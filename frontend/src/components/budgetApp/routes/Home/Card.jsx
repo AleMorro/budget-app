@@ -13,7 +13,7 @@ function Card( {card} ) {
            totalBalance } = useGlobalContext()
    
    const [filter, setFilter] = useState("Today");
-
+   
    const handleFilterChange = filter => {
       setFilter(filter);
       if(filter === 'Today') {
