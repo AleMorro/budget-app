@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { CardsData } from '../../data/CardsData';
 
@@ -7,15 +7,13 @@ import Card from './Card';
 import '../../styles/Dashboard.css'
 
 function Dashboard() {
-
-   const [cards, setCards] = useState([])
    
    return (
       <section className="dashboard section">
          <div className="row">
             <div className="col-lg-12">
                <div className="row">
-                  { 
+                  {
                      CardsData.map(card => <Card key={card.id} card={card} />)
                   }
                </div>
