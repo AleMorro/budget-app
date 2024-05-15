@@ -12,6 +12,7 @@ function Card( {card} ) {
    
    const [filter, setFilter] = useState("Today");
    const [renderedData, setRenderedData] = useState(null);
+   const [renderedTrend, setRenderedTrend] = useState(0)
 
    /**
     * Function to handle the fetch of data by the filter
@@ -22,37 +23,38 @@ function Card( {card} ) {
       try {
          setFilter(filter);
          let data
+         let previousData
 
          if(card.name === 'Incomes') {
             switch(filter) {
                case 'Today':
-                  const currentDay = new Date().getDate()
-                  data = incomesByFilter('Today', currentDay)
+                  data = incomesByFilter('Today', new Date().getDate())
+                  previousData = incomesByFilter('Today', new Date().getDate() - 1)
                   break;
                case 'This Month':
-                  const currentMonth = new Date().getMonth()
-                  data = incomesByFilter('This Month', currentMonth)
+                  data = incomesByFilter('This Month', new Date().getMonth())
+                  previousData = incomesByFilter('This Month', new Date().getMonth() - 1)
                   break;
                case 'This Year':
-                  const currentYear = new Date().getFullYear()
-                  data = incomesByFilter('This Year', currentYear)
+                  data = incomesByFilter('This Year', new Date().getFullYear())
+                  previousData = incomesByFilter('This Year', new Date().getFullYear() - 1)
                   break;
                default:
                   throw new Error("Invalid filter provided: " + filter)
             }
          } else if(card.name === 'Expenses') {
             switch(filter) {
-               case 'Today':
-                  const currentDay = new Date().getDate()
-                  data = expensesByFilter('Today', currentDay)
+               case 'Today': 
+                  data = expensesByFilter('Today', new Date().getDate())
+                  previousData = expensesByFilter('Today', new Date().getDate() - 1) 
                   break;
-               case 'This Month':
-                  const currentMonth = new Date().getMonth()
-                  data = expensesByFilter('This Month', currentMonth)
+               case 'This Month': 
+                  data = expensesByFilter('This Month', new Date().getMonth())
+                  previousData = expensesByFilter('This Month', new Date().getMonth() - 1)
                   break;
                case 'This Year':
-                  const currentYear = new Date().getFullYear()
-                  data = expensesByFilter('This Year', currentYear)
+                  data = expensesByFilter('This Year', new Date().getFullYear())
+                  previousData = expensesByFilter('This Year', new Date().getFullYear() - 1)
                   break;
                default:
                   throw new Error("Invalid filter provided: " + filter)
@@ -62,21 +64,32 @@ function Card( {card} ) {
                case 'Today':
                   const currentDay = new Date().getDate()
                   data = balanceByFilter('Today', currentDay)
+                  previousData = balanceByFilter('Today', currentDay - 1)
                   break;
                case 'This Month':
-                  const currentMonth = new Date().getMonth()
-                  data = balanceByFilter('This Month', currentMonth)
+                  data = balanceByFilter('This Month', new Date().getMonth())
+                  previousData = balanceByFilter('This Month', new Date().getMonth() - 1)
                   break;
                case 'This Year':
-                  const currentYear = new Date().getFullYear()
-                  data = balanceByFilter('This Year', currentYear)
+                  data = balanceByFilter('This Year', new Date().getFullYear())
+                  previousData = balanceByFilter('This Year', new Date().getFullYear() - 1)
                   break;
                default:
                   throw new Error("Invalid filter provided: " + filter)
             }
          }
-         
+         // set the value of the Card
          setRenderedData(data.toLocaleString('en-US'))
+
+         // calculate and set the value of the trend
+         // the trend is the increment or decrement in % beetween the current 
+         // filter values and the old ones of the same filter
+         let trend = (data / previousData) - 1
+
+         if(trend == Infinity) setRenderedTrend(1)
+         else if(card.name === 'Expenses') setRenderedTrend(trend.toFixed(2) * -1)
+         else setRenderedTrend(trend.toFixed(2));
+
       } catch(err) {
          console.error("Error fetching data: ", err)
       }
@@ -109,16 +122,16 @@ function Card( {card} ) {
             
             <span
                className={`${
-                  0.15 > 0 ? 'text-success': 'text-danger'
+                  renderedTrend > 0 ? 'text-success': 'text-danger'
                } small pt-1 fw-bold`}
             >
-               {0.15 > 0
-                  ? 0.15 * 100
-                  : 0.15 * 100}
+               {renderedTrend > 0
+                  ? renderedTrend * 100
+                  : renderedTrend * 100}
                %
             </span>
             <span className="text-muted small pt-2 ps-1">
-               {10 > 0 ? 'increase': 'decrease'}
+               {renderedTrend > 0 ? 'increase': 'decrease'}
             </span>
            </div>
          </div>

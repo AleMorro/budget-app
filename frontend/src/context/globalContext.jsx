@@ -157,6 +157,8 @@ export const GlobalProvider = ({ children }) => {
       return getYear(date) === targetYear;
    };
    
+   // Function to calculate the difference beetween incomes and the expenses
+   // based on the filter
    const balanceByFilter = (filter, targetValue) => {
       console.log("Filter balance function: " + filter)
 
