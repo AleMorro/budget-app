@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
-import { GlobalProvider, useGlobalContext } from '../../../../context/globalContext';
+import { useGlobalContext } from '../../../../context/globalContext';
 
 import CardFilter from './CardFilter';
 
@@ -8,43 +8,49 @@ import '../../styles/Card.css'
 
 function Card( {card} ) {
 
-   const { getIncomes, totalIncomes, incomesByFilter,
-           getExpenses, totalExpenses,
-           totalBalance } = useGlobalContext()
+   const { incomesByFilter, loading } = useGlobalContext()
    
    const [filter, setFilter] = useState("Today");
-   
-   const handleFilterChange = filter => {
-      setFilter(filter);
-      if(filter === 'Today') {
-         console.log("Fetch")
-         getIncomes(1)
-            .then(getExpenses(1))
-            .catch(error => {
-               console.error('Error fetching incomes: ', error)
-            })
-      }
-      else if(filter === 'This Month') {
-         // to implement filter function
-      }
-      else {
-         // to implement filter function
-      }
-   }
+   const [renderedData, setRenderedData] = useState(null);
 
-   const renderData = () => {
-      switch (card.name) {
-         case 'Incomes':
-            return '$' + incomesByFilter('today').toLocaleString('en-US');
-         case 'Expenses':
-            return '$' + totalExpenses().toLocaleString('en-US');
-         case 'Balance':
-            return '$' + 1200; // Assuming data is the balance
-         default:
-            return 'Nulla';
-      }
-   };
+   /**
+    * Function to handle the fetch of data by the filter
+    * @param {*} filter 
+    */
+   const handleFilterChange = useCallback((filter)  => {
 
+      try {
+         setFilter(filter);
+         let data
+
+         switch(filter) {
+            case 'Today':
+               const currentDay = new Date().getDate()
+               data = incomesByFilter('Today', currentDay)
+               break;
+            case 'This Month':
+               const currentMonth = new Date().getMonth()
+               data = incomesByFilter('This Month', currentMonth)
+               break;
+            case 'This Year':
+               const currentYear = new Date().getFullYear()
+               data = incomesByFilter('This Year', currentYear)
+               break;
+            default:
+               throw new Error("Invalid filter provided: " + filter)
+         }
+         setRenderedData(data.toLocaleString('en-US'))
+      } catch(err) {
+         console.error("Error fetching data: ", err)
+      }
+   }, [incomesByFilter]);
+
+   // Hook used to fetch data and rendered the correct data on mount
+   useEffect(() => {
+      if(!loading) {
+         handleFilterChange(filter)
+      }
+   }, [loading, filter, handleFilterChange])
 
    return (
       <div className="col-xxl-4 col-md-4">
@@ -61,7 +67,7 @@ function Card( {card} ) {
             </div>
          <div className="ps-3">
             <h6>
-               {renderData()} 
+               {'$' + renderedData} 
             </h6> 
             
             <span

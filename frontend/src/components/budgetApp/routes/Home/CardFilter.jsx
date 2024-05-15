@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 function CardFilter( {filterChange} ) {
+
    return (
       <div className="filter">
          <a className="icon" data-bs-toggle="dropdown">
