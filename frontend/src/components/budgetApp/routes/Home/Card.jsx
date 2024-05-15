@@ -8,7 +8,7 @@ import '../../styles/Card.css'
 
 function Card( {card} ) {
 
-   const { incomesByFilter, loading } = useGlobalContext()
+   const { incomesByFilter, expensesByFilter, balanceByFilter, loading } = useGlobalContext()
    
    const [filter, setFilter] = useState("Today");
    const [renderedData, setRenderedData] = useState(null);
@@ -23,27 +23,64 @@ function Card( {card} ) {
          setFilter(filter);
          let data
 
-         switch(filter) {
-            case 'Today':
-               const currentDay = new Date().getDate()
-               data = incomesByFilter('Today', currentDay)
-               break;
-            case 'This Month':
-               const currentMonth = new Date().getMonth()
-               data = incomesByFilter('This Month', currentMonth)
-               break;
-            case 'This Year':
-               const currentYear = new Date().getFullYear()
-               data = incomesByFilter('This Year', currentYear)
-               break;
-            default:
-               throw new Error("Invalid filter provided: " + filter)
+         if(card.name === 'Incomes') {
+            switch(filter) {
+               case 'Today':
+                  const currentDay = new Date().getDate()
+                  data = incomesByFilter('Today', currentDay)
+                  break;
+               case 'This Month':
+                  const currentMonth = new Date().getMonth()
+                  data = incomesByFilter('This Month', currentMonth)
+                  break;
+               case 'This Year':
+                  const currentYear = new Date().getFullYear()
+                  data = incomesByFilter('This Year', currentYear)
+                  break;
+               default:
+                  throw new Error("Invalid filter provided: " + filter)
+            }
+         } else if(card.name === 'Expenses') {
+            switch(filter) {
+               case 'Today':
+                  const currentDay = new Date().getDate()
+                  data = expensesByFilter('Today', currentDay)
+                  break;
+               case 'This Month':
+                  const currentMonth = new Date().getMonth()
+                  data = expensesByFilter('This Month', currentMonth)
+                  break;
+               case 'This Year':
+                  const currentYear = new Date().getFullYear()
+                  data = expensesByFilter('This Year', currentYear)
+                  break;
+               default:
+                  throw new Error("Invalid filter provided: " + filter)
+            }
+         } else {
+            switch(filter) {
+               case 'Today':
+                  const currentDay = new Date().getDate()
+                  data = balanceByFilter('Today', currentDay)
+                  break;
+               case 'This Month':
+                  const currentMonth = new Date().getMonth()
+                  data = balanceByFilter('This Month', currentMonth)
+                  break;
+               case 'This Year':
+                  const currentYear = new Date().getFullYear()
+                  data = balanceByFilter('This Year', currentYear)
+                  break;
+               default:
+                  throw new Error("Invalid filter provided: " + filter)
+            }
          }
+         
          setRenderedData(data.toLocaleString('en-US'))
       } catch(err) {
          console.error("Error fetching data: ", err)
       }
-   }, [incomesByFilter]);
+   }, [incomesByFilter, expensesByFilter]);
 
    // Hook used to fetch data and rendered the correct data on mount
    useEffect(() => {

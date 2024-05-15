@@ -1,3 +1,5 @@
+import React from "react";
+
 import PageTitle from "../PageTitle";
 
 import '../../styles/Main.css';

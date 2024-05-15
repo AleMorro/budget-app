@@ -20,9 +20,12 @@ export const GlobalProvider = ({ children }) => {
    const[error, setError] = useState(null)
    const[loading, setLoading] = useState(true)
 
+   // useEffect hook to fetch data from backend when the
+   // the globalContext is mounted
    useEffect(() => {
       console.log("GlobalContext useEffect:")
       getIncomes(1)
+      getExpenses(1)
    }, [])
 
    /************ 
@@ -38,21 +41,46 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const getExpenses = async (user_id) => {
-      const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
-      setExpenses(res.data)
-      console.log(res.data)
+      try {
+         const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
+         console.log(res.data)
+         setExpenses(res.data)
+         setLoading(false)
+      } catch(err) {
+         console.error('Error fetching incomes in context:', err);
+         setError(err);
+         setLoading(false)
+      } 
+   }
+
+   const expensesByFilter = (filter, targetValue) => {
+      console.log("Filter function: " + filter)
+
+      let filteredExpenses
+      switch(filter) {
+         case 'Today':
+            filteredExpenses = expenses.filter(exp => filterByDay(exp.date, targetValue))
+            break;
+         case 'This Month':
+            filteredExpenses = expenses.filter(exp => filterByMonth(exp.date, targetValue))
+            break;
+         case 'This Year':
+            filteredExpenses = expenses.filter(exp => filterByYear(exp.date, targetValue))
+            break;
+         default:
+            console.log("Invalid filter provided")
+            return 0
+      }
+
+      let total = 0
+      filteredExpenses.forEach((expense) => {
+         total += expense.amount
+      });
+      console.log("Total expenses filtered " + total)
+      return total
    }
 
    // to implement: deleteExpense
-
-   const totalExpenses = () => {
-      let total = 0;
-      expenses.forEach((expense) => {
-         total += expense.amount
-      })
-      console.log("Total expenses: " + total)
-      return total;
-   }
 
    /************ 
     * INCOMES
@@ -71,7 +99,6 @@ export const GlobalProvider = ({ children }) => {
          console.log(res.data)
          setIncomes(res.data)
          setLoading(false)
-      
       } catch(err) {
          console.error('Error fetching incomes in context:', err);
          setError(err);
@@ -108,21 +135,9 @@ export const GlobalProvider = ({ children }) => {
 
    // to implement: deleteIncome
 
-   const totalIncomes = () => {
-      let total = 0;
-      incomes.forEach((income) => {
-         total += income.amount
-      })
-      console.log("Total incomes: " + total)
-      return total;
-   }
-
    /************ 
     * GENERAL
    *************/
-   const totalBalance = () => {
-      return totalIncomes() - totalExpenses()
-   };
 
    const filterByDay = (dateString, targetDay) => {
       const date = parseISO(dateString)
@@ -141,6 +156,41 @@ export const GlobalProvider = ({ children }) => {
       const date = parseISO(dateString);
       return getYear(date) === targetYear;
    };
+   
+   const balanceByFilter = (filter, targetValue) => {
+      console.log("Filter balance function: " + filter)
+
+      let filteredIncomes
+      let filteredExpenses
+      switch(filter) {
+         case 'Today':
+            filteredIncomes = incomes.filter(inc => filterByDay(inc.date, targetValue))
+            filteredExpenses = expenses.filter(exp => filterByDay(exp.date, targetValue))
+            break;
+         case 'This Month':
+            filteredIncomes = incomes.filter(inc => filterByMonth(inc.date, targetValue))
+            filteredExpenses = expenses.filter(exp => filterByMonth(exp.date, targetValue))
+            break;
+         case 'This Year':
+            filteredIncomes = incomes.filter(inc => filterByYear(inc.date, targetValue))
+            filteredExpenses = expenses.filter(exp => filterByYear(exp.date, targetValue))
+            break;
+         default:
+            console.log("Invalid filter provided")
+            return 0
+      }
+
+      let totalInc = 0
+      filteredIncomes.forEach((income) => {
+         totalInc += income.amount
+      });
+
+      let totalExp = 0
+      filteredExpenses.forEach((expense) => {
+         totalExp += expense.amount
+      });
+      return totalInc - totalExp
+   } 
    /*
    const getUsers = async () => {
       try {
@@ -158,14 +208,13 @@ export const GlobalProvider = ({ children }) => {
       <GlobalContext.Provider value={{ 
          addExpense,
          getExpenses,
-         totalExpenses,
          addIncome,
          getIncomes,
-         totalIncomes,
-         totalBalance,
          error,
          setError,
          incomesByFilter,
+         expensesByFilter,
+         balanceByFilter,
          loading
       }}>
          {children}
