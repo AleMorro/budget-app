@@ -76,24 +76,46 @@ function Card( {card} ) {
                   break;
                default:
                   throw new Error("Invalid filter provided: " + filter)
-            }
+            } 
          }
          // set the value of the Card
          setRenderedData(data.toLocaleString('en-US'))
+
+         console.log("PREVIOUS: ", previousData)
 
          // calculate and set the value of the trend
          // the trend is the increment or decrement in % beetween the current 
          // filter values and the old ones of the same filter
          let trend = (data / previousData) - 1
 
-         if(trend == Infinity) setRenderedTrend(1)
-         else if(card.name === 'Expenses') setRenderedTrend(trend.toFixed(2) * -1)
+         if(trend === Infinity) setRenderedTrend(1)
+         else if(isNaN(trend)) setRenderedTrend(0)
+         else if(card.name === 'Expenses') setRenderedTrend(trend.toFixed(2))
          else setRenderedTrend(trend.toFixed(2));
 
       } catch(err) {
          console.error("Error fetching data: ", err)
       }
    }, [incomesByFilter, expensesByFilter]);
+
+   // Function to render the correct label for trend
+   const renderText = () => {
+      if(card.name === 'Expenses') {
+         return renderedTrend > 0 ? 'increase' : 'decrease'
+      }
+      else {
+         return renderedTrend > 0 ? 'increase' : 'decrease' 
+      }
+   }
+   // Function ro render the correct color for the trend
+   const renderColor = () => {
+      if(card.name === 'Expenses') {
+         return renderedTrend > 0 ? 'text-danger': 'text-success'
+      }
+      else {
+         return renderedTrend > 0 ? 'text-success' : 'text-danger' 
+      }
+   }
 
    // Hook used to fetch data and rendered the correct data on mount
    useEffect(() => {
@@ -121,9 +143,7 @@ function Card( {card} ) {
             </h6> 
             
             <span
-               className={`${
-                  renderedTrend > 0 ? 'text-success': 'text-danger'
-               } small pt-1 fw-bold`}
+               className={`${renderColor()} small pt-1 fw-bold`}
             >
                {renderedTrend > 0
                   ? renderedTrend * 100
@@ -131,7 +151,7 @@ function Card( {card} ) {
                %
             </span>
             <span className="text-muted small pt-2 ps-1">
-               {renderedTrend > 0 ? 'increase': 'decrease'}
+               {renderText()}
             </span>
            </div>
          </div>
