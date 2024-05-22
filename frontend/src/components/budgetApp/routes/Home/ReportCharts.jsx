@@ -1,21 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Chart from 'react-apexcharts';
 
+import { useGlobalContext } from '../../../../context/globalContext';
+import { useCallback } from 'react';
+
+// Idea per renderizzare i dati giusti nel grafico: 
+// passare tre array in base al filtro e ritirati dal backend in Reports
+// Vedere se passare i valori come parametri o come props
 function ReportCharts() {
 
    const[data, setData] = useState({
+
       series: [
          {
             name: 'Incomes',
-            data: [31, 40, 28, 51, 42, 82, 56],
+            data: [],
          },
          {
             name: 'Expenses',
-            data: [11, 32, 45, 42, 34, 52, 41],
+            data: [],
          },
          {
             name: 'Balance',
-            data: [15, 11, 32, 18, 9, 24, 67],
+            data: [],
          },
       ],
       options: {
@@ -23,7 +30,7 @@ function ReportCharts() {
             height: 350,
             type: 'area',
             toolbar: {
-               show: false
+               show: true
             },
          },
          markers: {
