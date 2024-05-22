@@ -16,7 +16,7 @@ function Reports() {
             <h5 className="card-title">
                Reports <span>/{filter}</span>
             </h5>
-            <ReportCharts />
+            <ReportCharts filter={filter}/>
          </div>
       </div>
    )

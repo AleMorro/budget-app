@@ -192,7 +192,38 @@ export const GlobalProvider = ({ children }) => {
          totalExp += expense.amount
       });
       return totalInc - totalExp
-   } 
+   }
+
+   /**
+    * TESTING RITIRO DATI PER GRAFICO
+    */
+   const getFilteredData = (data, filter, targetValue) => {
+      let filteredData;
+      switch (filter) {
+         case 'Today':
+            filteredData = data.filter(item => filterByDay(item.date, targetValue));
+            break;
+         case 'This Month':
+            filteredData = data.filter(item => filterByMonth(item.date, targetValue));
+            break;
+         case 'This Year':
+            filteredData = data.filter(item => filterByYear(item.date, targetValue));
+            break;
+         default:
+            console.log("Invalid filter provided");
+            return [];
+      }
+      return filteredData;
+   };
+   
+   const incomesByFiltered = (filter, targetValue) => {
+      return getFilteredData(incomes, filter, targetValue);
+   };
+   
+   const expensesByFiltered = (filter, targetValue) => {
+      return getFilteredData(expenses, filter, targetValue);
+   };
+
    /*
    const getUsers = async () => {
       try {
@@ -217,7 +248,9 @@ export const GlobalProvider = ({ children }) => {
          incomesByFilter,
          expensesByFilter,
          balanceByFilter,
-         loading
+         loading,
+         expensesByFiltered,
+         incomesByFiltered
       }}>
          {children}
       </GlobalContext.Provider>

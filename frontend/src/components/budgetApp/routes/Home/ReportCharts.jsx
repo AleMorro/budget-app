@@ -7,23 +7,16 @@ import { useCallback } from 'react';
 // Idea per renderizzare i dati giusti nel grafico: 
 // passare tre array in base al filtro e ritirati dal backend in Reports
 // Vedere se passare i valori come parametri o come props
-function ReportCharts() {
+function ReportCharts({ filter }) {
 
-   const[data, setData] = useState({
+   const { incomesByFiltered, expensesByFiltered, balanceByFilter, loading } = useGlobalContext();
+
+   const[chartData, setChartData] = useState({
 
       series: [
-         {
-            name: 'Incomes',
-            data: [],
-         },
-         {
-            name: 'Expenses',
-            data: [],
-         },
-         {
-            name: 'Balance',
-            data: [],
-         },
+         { name: 'Incomes', data: [] },
+         { name: 'Expenses', data: [] },
+         { name: 'Balance', data: [] },
       ],
       options: {
          chart: {
@@ -55,15 +48,7 @@ function ReportCharts() {
          },
          xaxis: {
             type: 'datetime',
-            categories: [
-               '2018-09-19',
-               '2018-10-19',
-               '2018-11-19',
-               '2018-12-19',
-               '2019-01-19',
-               '2019-02-19',
-               '2019-03-19',
-            ],
+            categories: [],
          },
          tooltip: {
             x: {
@@ -73,12 +58,75 @@ function ReportCharts() {
       },
    })
 
+   const fetchDataByFilter = useCallback(() => {
+      if (loading) return;
+
+      let categories = [];
+      let incomeData = [];
+      let expenseData = [];
+      let balanceData = [];
+
+      let targetValue;
+      const today = new Date();
+
+      switch (filter) {
+         case 'Today':
+            targetValue = today.getDate();
+            break;
+         case 'This Month':
+            targetValue = today.getMonth();
+            break;
+         case 'This Year':
+            targetValue = today.getFullYear();
+            break;
+         default:
+            targetValue = today.getDate();
+      }
+
+      const filteredIncomes = incomesByFiltered(filter, targetValue);
+      const filteredExpenses = expensesByFiltered(filter, targetValue);
+      const filteredBalance = balanceByFilter(filter, targetValue);
+
+      filteredIncomes.forEach(income => {
+         //categories.push(income.date);
+         incomeData.push(income.amount);
+      });
+
+      filteredExpenses.forEach(expense => {
+         categories.push(expense.date)
+         expenseData.push(expense.amount);
+      });
+      /*
+      filteredBalance.forEach(balance => {
+         balanceData.push(balance.amount);
+      });
+      */
+
+      setChartData({
+         ...chartData,
+         series: [
+            { name: 'Incomes', data: incomeData },
+            { name: 'Expenses', data: expenseData },
+            { name: 'Balance', data: balanceData },
+         ],
+         options: {
+            ...chartData.options,
+            xaxis: { ...chartData.options.xaxis, categories }
+         },
+      });
+   }, [filter, incomesByFiltered, expensesByFiltered, balanceByFilter, loading]);
+
+   useEffect(() => {
+      fetchDataByFilter();
+   }, [fetchDataByFilter]);
+
+
    return (
       <Chart 
-         options={data.options}
-         series={data.series}
-         type={data.options.chart.type}
-         height={data.options.chart.height}
+         options={chartData.options}
+         series={chartData.series}
+         type={chartData.options.chart.type}
+         height={chartData.options.chart.height}
       />
    )
 }
