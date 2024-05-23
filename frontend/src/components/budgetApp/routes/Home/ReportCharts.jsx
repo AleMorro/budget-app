@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 // Vedere se passare i valori come parametri o come props
 function ReportCharts({ filter }) {
 
-   const { incomesByFiltered, expensesByFiltered, balanceByFilter, loading } = useGlobalContext();
+   const { incomesByFiltered, expensesByFiltered, loading } = useGlobalContext();
 
    const[chartData, setChartData] = useState({
 
@@ -23,7 +23,7 @@ function ReportCharts({ filter }) {
             height: 350,
             type: 'area',
             toolbar: {
-               show: true
+               show: false
             },
          },
          markers: {
@@ -61,10 +61,13 @@ function ReportCharts({ filter }) {
    const fetchDataByFilter = useCallback(() => {
       if (loading) return;
 
-      let categories = [];
       let incomeData = [];
       let expenseData = [];
       let balanceData = [];
+
+      let incomeCategories = [];
+      let expenseCategories = [];
+      let balanceCategories = [];
 
       let targetValue;
       const today = new Date();
@@ -85,25 +88,25 @@ function ReportCharts({ filter }) {
 
       const filteredIncomes = incomesByFiltered(filter, targetValue);
       const filteredExpenses = expensesByFiltered(filter, targetValue);
-      const filteredBalance = balanceByFilter(filter, targetValue);
+      //const filteredBalance = balanceByFilter(filter, targetValue);
 
       filteredIncomes.forEach(income => {
-         //categories.push(income.date);
-         incomeData.push(income.amount);
+         const date = new Date(income.date);
+         incomeData.push({ x: date, y: income.amount });
+         incomeCategories.push(date);
       });
 
       filteredExpenses.forEach(expense => {
-         categories.push(expense.date)
-         expenseData.push(expense.amount);
+         const date = new Date(expense.date);
+         expenseData.push({ x: date, y: expense.amount });
+         expenseCategories.push(date);
       });
-      /*
-      filteredBalance.forEach(balance => {
-         balanceData.push(balance.amount);
-      });
-      */
+
+      // Ordina le date per ogni serie
+      incomeCategories.sort((a, b) => a - b);
+      expenseCategories.sort((a, b) => a - b);
 
       setChartData({
-         ...chartData,
          series: [
             { name: 'Incomes', data: incomeData },
             { name: 'Expenses', data: expenseData },
@@ -111,15 +114,17 @@ function ReportCharts({ filter }) {
          ],
          options: {
             ...chartData.options,
-            xaxis: { ...chartData.options.xaxis, categories }
+            xaxis: { 
+               ...chartData.options.xaxis, 
+               categories: [...new Set([...incomeCategories, ...expenseCategories, ...balanceCategories])],
+            },
          },
       });
-   }, [filter, incomesByFiltered, expensesByFiltered, balanceByFilter, loading]);
+   }, [filter, incomesByFiltered, expensesByFiltered, loading]);
 
    useEffect(() => {
       fetchDataByFilter();
    }, [fetchDataByFilter]);
-
 
    return (
       <Chart 

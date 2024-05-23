@@ -17,7 +17,7 @@ function Dashboard() {
                   {
                      CardsData.map(card => <Card key={card.id} card={card} />)
                   }
-                  <div className="col-9">
+                  <div className="col-8">
                      <Reports />
                   </div>
                </div>
