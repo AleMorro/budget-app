@@ -8,7 +8,7 @@ import '../../styles/Card.css'
 
 function Card( {card} ) {
 
-   const { incomesByFilter, expensesByFilter, balanceByFilter, loading } = useGlobalContext()
+   const { loading, totalIncomesFiltered, totalExpensesFiltered } = useGlobalContext()
    
    const [filter, setFilter] = useState("Today");
    const [renderedData, setRenderedData] = useState(null);
@@ -22,71 +22,51 @@ function Card( {card} ) {
 
       try {
          setFilter(filter);
-         let data
-         let previousData
+         let incomeData
+         let expenseData
+         let previousIncData
+         let previousExpData
 
-         if(card.name === 'Incomes') {
-            switch(filter) {
-               case 'Today':
-                  data = incomesByFilter('Today', new Date().getDate())
-                  previousData = incomesByFilter('Today', new Date().getDate() - 1)
-                  break;
-               case 'This Month':
-                  data = incomesByFilter('This Month', new Date().getMonth())
-                  previousData = incomesByFilter('This Month', new Date().getMonth() - 1)
-                  break;
-               case 'This Year':
-                  data = incomesByFilter('This Year', new Date().getFullYear())
-                  previousData = incomesByFilter('This Year', new Date().getFullYear() - 1)
-                  break;
-               default:
-                  throw new Error("Invalid filter provided: " + filter)
-            }
-         } else if(card.name === 'Expenses') {
-            switch(filter) {
-               case 'Today': 
-                  data = expensesByFilter('Today', new Date().getDate())
-                  previousData = expensesByFilter('Today', new Date().getDate() - 1) 
-                  break;
-               case 'This Month': 
-                  data = expensesByFilter('This Month', new Date().getMonth())
-                  previousData = expensesByFilter('This Month', new Date().getMonth() - 1)
-                  break;
-               case 'This Year':
-                  data = expensesByFilter('This Year', new Date().getFullYear())
-                  previousData = expensesByFilter('This Year', new Date().getFullYear() - 1)
-                  break;
-               default:
-                  throw new Error("Invalid filter provided: " + filter)
-            }
-         } else {
-            switch(filter) {
-               case 'Today':
-                  const currentDay = new Date().getDate()
-                  data = balanceByFilter('Today', currentDay)
-                  previousData = balanceByFilter('Today', currentDay - 1)
-                  break;
-               case 'This Month':
-                  data = balanceByFilter('This Month', new Date().getMonth())
-                  previousData = balanceByFilter('This Month', new Date().getMonth() - 1)
-                  break;
-               case 'This Year':
-                  data = balanceByFilter('This Year', new Date().getFullYear())
-                  previousData = balanceByFilter('This Year', new Date().getFullYear() - 1)
-                  break;
-               default:
-                  throw new Error("Invalid filter provided: " + filter)
-            } 
+         let targetValue
+         const today = new Date();
+
+         switch (filter) {
+            case 'Today':
+               targetValue = today.getDate();
+               break;
+            case 'This Month':
+               targetValue = today.getMonth();
+               break;
+            case 'This Year':
+               targetValue = today.getFullYear();
+               break;
+            default:
+               targetValue = today.getDate();
          }
-         // set the value of the Card
-         setRenderedData(data.toLocaleString('en-US'))
 
-         console.log("PREVIOUS: ", previousData)
+         incomeData = totalIncomesFiltered(filter, targetValue)
+         previousIncData = totalIncomesFiltered(filter, targetValue - 1)
 
-         // calculate and set the value of the trend
-         // the trend is the increment or decrement in % beetween the current 
-         // filter values and the old ones of the same filter
-         let trend = (data / previousData) - 1
+         expenseData = totalExpensesFiltered(filter, targetValue)
+         previousExpData = totalExpensesFiltered(filter, targetValue - 1)
+
+         let balanceData = incomeData - expenseData
+         let previousBalData = previousIncData - previousExpData
+
+         let trend = 0
+
+         if (card.name === 'Incomes') {
+            setRenderedData(incomeData.toLocaleString('en-US'))
+            trend = (incomeData / previousIncData) - 1
+         } else if(card.name === 'Expenses') {
+            setRenderedData(expenseData.toLocaleString('en-US'))
+            trend = (expenseData / previousExpData) - 1
+         } else {
+            setRenderedData(balanceData.toLocaleString('en-US'))
+            trend = (balanceData / previousBalData) - 1
+         }
+
+         console.log("PREVIOUS: ", 1000)
 
          if(trend === Infinity) setRenderedTrend(1)
          else if(isNaN(trend)) setRenderedTrend(0)
@@ -96,7 +76,7 @@ function Card( {card} ) {
       } catch(err) {
          console.error("Error fetching data: ", err)
       }
-   }, [incomesByFilter, expensesByFilter]);
+   }, [totalExpensesFiltered, totalIncomesFiltered]);
 
    // Function to render the correct label for trend
    const renderText = () => {
