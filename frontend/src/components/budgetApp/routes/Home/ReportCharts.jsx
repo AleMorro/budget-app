@@ -20,7 +20,7 @@ function ReportCharts({ filter }) {
             height: 350,
             type: 'area',
             toolbar: {
-               show: true
+               show: false
             },
          },
          markers: {
@@ -113,7 +113,7 @@ function ReportCharts({ filter }) {
             ...chartData.options,
             xaxis: { 
                ...chartData.options.xaxis, 
-               categories: [...new Set([...incomeCategories, /*...expenseCategories,*/ ...balanceCategories])],
+               categories: [...new Set([...incomeCategories, ...expenseCategories])],
             },
          },
       });

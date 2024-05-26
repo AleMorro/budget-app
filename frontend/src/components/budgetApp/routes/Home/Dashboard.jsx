@@ -6,19 +6,23 @@ import Card from './Card';
 
 import '../../styles/Dashboard.css'
 import Reports from './Reports';
+import Pie from './Pie';
 
 function Dashboard() {
    
    return (
       <section className="dashboard section">
          <div className="row">
-            <div className="col-lg-12">
+            <div className="col-lg-12 col-md-12">
                <div className="row">
                   {
                      CardsData.map(card => <Card key={card.id} card={card} />)
                   }
                   <div className="col-8">
                      <Reports />
+                  </div>
+                  <div className="col-4">
+                     <Pie />
                   </div>
                </div>
             </div>
