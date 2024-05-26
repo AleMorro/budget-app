@@ -5,12 +5,14 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
+//import Home from '../components/budgetApp/routes/Home/Home.jsx'
 
 const { parseISO, getDate, getMonth, getYear } = require('date-fns')
 
 const BASE_URL = "http://localhost:5000/api/";
 
 const GlobalContext = createContext();
+
 
 export const GlobalProvider = ({ children }) => {
    
@@ -53,30 +55,18 @@ export const GlobalProvider = ({ children }) => {
       } 
    }
 
-   const expensesByFilter = (filter, targetValue) => {
-      console.log("Filter function: " + filter)
+   const expensesByFiltered = (filter, targetValue) => {
+      return getFilteredData(expenses, filter, targetValue);
+   };
 
-      let filteredExpenses
-      switch(filter) {
-         case 'Today':
-            filteredExpenses = expenses.filter(exp => filterByDay(exp.date, targetValue))
-            break;
-         case 'This Month':
-            filteredExpenses = expenses.filter(exp => filterByMonth(exp.date, targetValue))
-            break;
-         case 'This Year':
-            filteredExpenses = expenses.filter(exp => filterByYear(exp.date, targetValue))
-            break;
-         default:
-            console.log("Invalid filter provided")
-            return 0
-      }
+   const totalExpensesFiltered = (filter, targetValue) => {
+      let filterExpense = getFilteredData(expenses, filter, targetValue)
 
       let total = 0
-      filteredExpenses.forEach((expense) => {
+      filterExpense.forEach((expense) => {
          total += expense.amount
-      });
-      console.log("Total expenses filtered " + total)
+      })
+
       return total
    }
 
@@ -105,34 +95,22 @@ export const GlobalProvider = ({ children }) => {
          setLoading(false)
       }
    }
-   
-   const incomesByFilter = (filter, targetValue) => {
-      console.log("Filter function: " + filter)
 
-      let filteredIncomes
-      switch(filter) {
-         case 'Today':
-            filteredIncomes = incomes.filter(inc => filterByDay(inc.date, targetValue))
-            break;
-         case 'This Month':
-            filteredIncomes = incomes.filter(inc => filterByMonth(inc.date, targetValue))
-            break;
-         case 'This Year':
-            filteredIncomes = incomes.filter(inc => filterByYear(inc.date, targetValue))
-            break;
-         default:
-            console.log("Invalid filter provided")
-            return 0
-      }
+   const totalIncomesFiltered = (filter, targetValue) => {
+      let filterIncomes = getFilteredData(incomes, filter, targetValue)
 
       let total = 0
-      filteredIncomes.forEach((income) => {
+      filterIncomes.forEach((income) => {
          total += income.amount
-      });
-      console.log("Total incomes filtered " + total)
+      })
+
       return total
    }
 
+   const incomesByFiltered = (filter, targetValue) => {
+      return getFilteredData(incomes, filter, targetValue);
+   };
+   
    // to implement: deleteIncome
 
    /************ 
@@ -157,42 +135,29 @@ export const GlobalProvider = ({ children }) => {
       return getYear(date) === targetYear;
    };
    
-   // Function to calculate the difference beetween incomes and the expenses
-   // based on the filter
-   const balanceByFilter = (filter, targetValue) => {
-      console.log("Filter balance function: " + filter)
 
-      let filteredIncomes
-      let filteredExpenses
-      switch(filter) {
+   /**
+    * TESTING RITIRO DATI PER GRAFICO
+    */
+   const getFilteredData = (data, filter, targetValue) => {
+      let filteredData;
+      switch (filter) {
          case 'Today':
-            filteredIncomes = incomes.filter(inc => filterByDay(inc.date, targetValue))
-            filteredExpenses = expenses.filter(exp => filterByDay(exp.date, targetValue))
+            filteredData = data.filter(item => filterByDay(item.date, targetValue));
             break;
          case 'This Month':
-            filteredIncomes = incomes.filter(inc => filterByMonth(inc.date, targetValue))
-            filteredExpenses = expenses.filter(exp => filterByMonth(exp.date, targetValue))
+            filteredData = data.filter(item => filterByMonth(item.date, targetValue));
             break;
          case 'This Year':
-            filteredIncomes = incomes.filter(inc => filterByYear(inc.date, targetValue))
-            filteredExpenses = expenses.filter(exp => filterByYear(exp.date, targetValue))
+            filteredData = data.filter(item => filterByYear(item.date, targetValue));
             break;
          default:
-            console.log("Invalid filter provided")
-            return 0
+            console.log("Invalid filter provided");
+            return [];
       }
-
-      let totalInc = 0
-      filteredIncomes.forEach((income) => {
-         totalInc += income.amount
-      });
-
-      let totalExp = 0
-      filteredExpenses.forEach((expense) => {
-         totalExp += expense.amount
-      });
-      return totalInc - totalExp
-   } 
+      return filteredData;
+   };
+   
    /*
    const getUsers = async () => {
       try {
@@ -214,10 +179,11 @@ export const GlobalProvider = ({ children }) => {
          getIncomes,
          error,
          setError,
-         incomesByFilter,
-         expensesByFilter,
-         balanceByFilter,
-         loading
+         loading,
+         expensesByFiltered,
+         incomesByFiltered, 
+         totalExpensesFiltered,
+         totalIncomesFiltered
       }}>
          {children}
       </GlobalContext.Provider>
