@@ -4,9 +4,6 @@ import Chart from 'react-apexcharts';
 import { useGlobalContext } from '../../../../context/globalContext';
 import { useCallback } from 'react';
 
-// Idea per renderizzare i dati giusti nel grafico: 
-// passare tre array in base al filtro e ritirati dal backend in Reports
-// Vedere se passare i valori come parametri o come props
 function ReportCharts({ filter }) {
 
    const { incomesByFiltered, expensesByFiltered, loading } = useGlobalContext();
@@ -23,7 +20,7 @@ function ReportCharts({ filter }) {
             height: 350,
             type: 'area',
             toolbar: {
-               show: false
+               show: true
             },
          },
          markers: {
@@ -116,7 +113,7 @@ function ReportCharts({ filter }) {
             ...chartData.options,
             xaxis: { 
                ...chartData.options.xaxis, 
-               categories: [...new Set([...incomeCategories, ...expenseCategories, ...balanceCategories])],
+               categories: [...new Set([...incomeCategories, /*...expenseCategories,*/ ...balanceCategories])],
             },
          },
       });
