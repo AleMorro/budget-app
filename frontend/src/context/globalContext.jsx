@@ -137,7 +137,8 @@ export const GlobalProvider = ({ children }) => {
    
 
    /**
-    * TESTING RITIRO DATI PER GRAFICO
+    * Function to filter correct data and return the list of object of 
+    * the correct data needed from the frontend
     */
    const getFilteredData = (data, filter, targetValue) => {
       let filteredData;
