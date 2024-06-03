@@ -10,7 +10,7 @@ function Reports() {
    };
 
    return (
-      <div className="card">
+      <div className="card overflow-auto">
          <CardFilter filterChange={handleFilterChange} />
          <div className="card-body">
             <h5 className="card-title">
