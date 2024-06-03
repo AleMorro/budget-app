@@ -7,12 +7,16 @@ import Recent from "./Recent";
 import FormInc from "./FormInc";
 
 import '../../styles/Main.css';
-import '../../styles/Transaction.css'
 import '../../styles/Dashboard.css'
+
+import { GlobalProvider } from '../../../../context/globalContext.jsx'
 
 function Incomes() {
 
    return(
+      <GlobalProvider>
+
+      
       <main id='main' className='main'>
          <PageTitle page="Incomes"/>
 
@@ -34,6 +38,8 @@ function Incomes() {
          </section>
 
       </main>
+
+      </GlobalProvider>
    )
 }
 
