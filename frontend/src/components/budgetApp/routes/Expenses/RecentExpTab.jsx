@@ -1,6 +1,6 @@
 import React from 'react'
 
-function RecentIncTab( { items } ) {
+function RecentExpTab( { items } ) {
    return (
       
       <table className="table table-borderless datatable">
@@ -24,7 +24,7 @@ function RecentIncTab( { items } ) {
                         <td>{item.date}</td>
                         <td>{item.description}</td>
                         <td>
-                           <span className='badge bg-success'>
+                           <span className='badge bg-danger'>
                               €{item.amount.toFixed(2)}
                            </span>
                         </td>
@@ -34,4 +34,4 @@ function RecentIncTab( { items } ) {
          </table>
    );
 }
-export default RecentIncTab;
+export default RecentExpTab;

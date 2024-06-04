@@ -119,7 +119,7 @@ function Card( {card} ) {
             </div>
          <div className="ps-3">
             <h6>
-               {'$' + renderedData} 
+               {'€ ' + renderedData} 
             </h6> 
             
             <span

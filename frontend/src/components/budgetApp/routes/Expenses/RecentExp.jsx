@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import CardFilter from '../Home/CardFilter'
-import RecentIncTab from './RecentIncTab';
 
 /*
 import SearchBar from '../../SearchBar'
@@ -8,10 +7,11 @@ import '../../styles/SearchBar.css'
 */
 
 import { useGlobalContext } from '../../../../context/globalContext';
+import RecentExpTab from './RecentExpTab';
 
-function Recent() {
+function RecentExp() {
 
-   const { incomesByFiltered, loading } = useGlobalContext();
+   const { expensesByFiltered, loading } = useGlobalContext();
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('Today')
@@ -42,7 +42,7 @@ function Recent() {
             targetValue = today.getDate();
       }
 
-      setItems(incomesByFiltered(filter, targetValue))
+      setItems(expensesByFiltered(filter, targetValue))
    }
 
    useEffect(() => {
@@ -55,14 +55,14 @@ function Recent() {
 
          <div className="card-body">
             <h5 className="card-title">
-               Recent incomes <span>/{filter}</span>
+               Recent expenses <span>/{filter}</span>
             </h5>
             {/* Add the searchBar */}
-            <RecentIncTab items={items}/>
+            <RecentExpTab items={items}/>
          </div>
 
       </div>
    )
 }
 
-export default Recent
+export default RecentExp
