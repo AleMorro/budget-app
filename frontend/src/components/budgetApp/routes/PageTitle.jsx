@@ -7,14 +7,14 @@ function PageTitle({ page }) {
 
    // filter SideBarData based on the page title
    const filteredData = SidebarData.filter(item => item.title === page);
-   const { title, icon } = filteredData[0];
+   const { title, icon, path } = filteredData[0];
 
    return (
       <div className="pagetitle">
          <nav>
             <ol className="breadcrumb">
                <li className="breadcrumb-item">
-                     <a href="/app">
+                     <a href={path}>
                         <i className="icon">{icon}</i>
                      </a>
                </li>

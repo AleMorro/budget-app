@@ -12,8 +12,7 @@ function ReportCharts({ filter }) {
 
       series: [
          { name: 'Incomes', data: [] },
-         { name: 'Expenses', data: [] },
-         { name: 'Balance', data: [] },
+         { name: 'Expenses', data: [] }
       ],
       options: {
          chart: {
@@ -26,7 +25,7 @@ function ReportCharts({ filter }) {
          markers: {
             size: 4,
          },
-         colors: ['#4154f1', '#2eca6a', '#ff771d'],
+         colors: ['#4154f1', '#2eca6a'],
          fill: {
             type: 'gradient',
             gradient: {
@@ -64,7 +63,6 @@ function ReportCharts({ filter }) {
 
       let incomeCategories = [];
       let expenseCategories = [];
-      let balanceCategories = [];
 
       let targetValue;
       const today = new Date();
@@ -85,7 +83,6 @@ function ReportCharts({ filter }) {
 
       const filteredIncomes = incomesByFiltered(filter, targetValue);
       const filteredExpenses = expensesByFiltered(filter, targetValue);
-      //const filteredBalance = balanceByFilter(filter, targetValue);
 
       filteredIncomes.forEach(income => {
          const date = new Date(income.date);
@@ -99,7 +96,7 @@ function ReportCharts({ filter }) {
          expenseCategories.push(date);
       });
 
-      // Ordina le date per ogni serie
+      // Sort date for series
       incomeCategories.sort((a, b) => a - b);
       expenseCategories.sort((a, b) => a - b);
 
