@@ -1,5 +1,5 @@
 # budget-app
-React simple web application to manage expenses and income and see their trends
+React simple web application to manage expenses and income and see their trends.
 ## Introduction
 Web site developed according to client-server logic. The project is divided into backend and frontend parts.
 ## Description
@@ -7,7 +7,7 @@ The application opens with a login screen where you can log in through email aut
 
 The application allows for 3 main sections:
 1. Home: presents a dashboard that summarizes the total value of various transactions. It is possible to filter the various cards to filter the results by time order (current Day, Month, Year)
-2. Incomes: presents a screen where there is a form to enter the various information of the transaction you want to register. Below that is shown a report of all previous entries, which can always be filtered by current month, day, or year.
+2. Incomes: presents a screen where there is a form to enter the various information of the transaction you want to register. Below that is shown a report of all previous entries, which can always be filtered by current month, day, or year
 3. Expenses: same Incomes organization
 
 The application features other screens that have not yet been developed, such as Budget and Wallets.
@@ -27,7 +27,7 @@ The technology stack used depends directly on the classic division in which web 
    * Axios: promise-based HTTP Client for node.js. Used to handle calls to the server by the client
    * date-fns: modern JavaScript date utility library
 ## Contributing
-Contribution to budget-app is welcome! If you have an idea for a new feature or bug fix, please open an issue or a pull request
+Contribution to budget-app is welcome! If you have an idea for a new feature or bug fix, please open an issue or a pull request.
 
 
 
