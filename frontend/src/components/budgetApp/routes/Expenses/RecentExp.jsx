@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Component } from 'react'
 import CardFilter from '../Home/CardFilter'
 
 /*
@@ -15,6 +15,7 @@ function RecentExp() {
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('Today')
+
    const handleFilterChange = filter => {
       setFilter(filter)
    };
@@ -46,8 +47,10 @@ function RecentExp() {
    }
 
    useEffect(() => {
-      fetchDataByFilter()
-   }, [filter])
+      if(!loading) {
+         fetchDataByFilter()
+      }
+   }, [filter, loading])
 
    return (
       <div className='card recent'>

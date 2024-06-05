@@ -15,6 +15,7 @@ function Recent() {
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('Today')
+
    const handleFilterChange = filter => {
       setFilter(filter)
    };
@@ -46,8 +47,10 @@ function Recent() {
    }
 
    useEffect(() => {
-      fetchDataByFilter()
-   }, [filter])
+      if(!loading) {
+         fetchDataByFilter()
+      }
+   }, [filter, loading])
 
    return (
       <div className='card recent'>
