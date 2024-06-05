@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
-import CardFilter from '../Home/CardFilter'
+import Form from './Form.jsx'
 
 function FormInc() {
-
-   const [filter, setFilter] = useState('Today')
-   const handleFilterChange = filter => {
-      setFilter(filter)
-   };
 
    return (
       <div className='card'>
@@ -15,6 +10,7 @@ function FormInc() {
                Add incomes
             </h5>
 
+            <Form />
          </div>
 
       </div>
