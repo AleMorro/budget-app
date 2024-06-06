@@ -3,13 +3,13 @@ import React from "react";
 import PageTitle from "../PageTitle";
 
 import '../../styles/Main.css'
-import Recent from "./Recent";
 import FormInc from "./FormInc";
 
 import '../../styles/Main.css';
 import '../../styles/Dashboard.css'
 
 import { GlobalProvider } from '../../../../context/globalContext.jsx'
+import RecentInc from "./RecentInc.jsx";
 
 function Incomes() {
 
@@ -27,7 +27,7 @@ function Incomes() {
                            <FormInc />
                         </div>
                         <div className="col-12">
-                           <Recent />
+                           <RecentInc />
                         </div>
 
                      </div>

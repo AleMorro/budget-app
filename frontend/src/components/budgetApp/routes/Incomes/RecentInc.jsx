@@ -9,7 +9,7 @@ import '../../styles/SearchBar.css'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 
-function Recent() {
+function RecentInc() {
 
    const { incomesByFiltered, loading } = useGlobalContext();
 
@@ -68,4 +68,4 @@ function Recent() {
    )
 }
 
-export default Recent
+export default RecentInc
