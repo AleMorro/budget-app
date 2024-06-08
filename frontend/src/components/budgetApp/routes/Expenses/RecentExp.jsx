@@ -22,9 +22,9 @@ function RecentExp() {
 
    const fetchDataByFilter = () => {
 
-      console.log("fetch data for recentIncomes")
+      console.log("fetch data for recentExpenses")
 
-      if (loading) return;
+      // if (loading) return;
 
       let targetValue;
       const today = new Date();
@@ -50,7 +50,7 @@ function RecentExp() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [filter, loading])
+   }, [filter])
 
    return (
       <div className='card recent'>

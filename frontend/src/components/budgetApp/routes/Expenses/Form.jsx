@@ -4,7 +4,7 @@ import { useGlobalContext } from '../../../../context/globalContext';
 
 function Form() {
 
-   const { addIncome, loggedUser, loading } = useGlobalContext();
+   const { addExpense, loggedUser, loading } = useGlobalContext();
 
    const [category, setCategory] = useState('');
    const [date, setDate] = useState('');
@@ -14,10 +14,10 @@ function Form() {
 
    const handleFormSubmit = (e) => {
 
-      console.log("Submit handle Income")
+      console.log("Submit handle Expense")
       e.preventDefault()
 
-      const income = {
+      const expense = {
           user_id: loggedUser,
           category,
           date,
@@ -26,14 +26,14 @@ function Form() {
       };
 
       try {
-         addIncome(income);
+         addExpense(expense);
          setCategory('');
          setDate('');
-         setAmount(null);
+         setAmount('');
          setDescription('');
          setError(null);
       } catch (err) {
-         setError("Failed to add income. Please try again.");
+         setError("Failed to add expense. Please try again.");
       }
    };
 
@@ -48,10 +48,10 @@ function Form() {
                required
             >
                <option selected disabled value="">Choose...</option>
-               <option>Salary</option>
-               <option>Investment</option>
-               <option>Wallet</option>
-               <option>Web project</option>
+               <option>Food</option>
+               <option>Sport</option>
+               <option>Vizi</option>
+               <option>Abbigliamento</option>
             </select>
             <div class="invalid-feedback">
                Please select a valid state.

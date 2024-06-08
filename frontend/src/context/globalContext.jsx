@@ -22,12 +22,17 @@ export const GlobalProvider = ({ children }) => {
    const[error, setError] = useState(null)
    const[loading, setLoading] = useState(true)
 
+   const[loggedUser, setLoggedUser] = useState(null)
+
    // useEffect hook to fetch data from backend when the
    // the globalContext is mounted
    useEffect(() => {
       console.log("GlobalContext useEffect:")
       getIncomes(1)
       getExpenses(1)
+      setLoggedUser(1)
+      setLoading(false)
+      console.log("User Logged: ", loggedUser)
    }, [])
 
    /************ 
@@ -35,6 +40,7 @@ export const GlobalProvider = ({ children }) => {
    *************/
 
    const addExpense = async(expense) => {
+      console.log("Global context addExp: ", expense.category)
       const res = await axios.post(`${BASE_URL}addExpense`, expense)
          .catch((err) => {
             setError(err.message)
@@ -42,16 +48,14 @@ export const GlobalProvider = ({ children }) => {
       getExpenses(expense.user_id);
    }
 
-   const getExpenses = async (user_id) => {
+   const getExpenses = async(user_id) => {
       try {
          const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
          console.log(res.data)
          setExpenses(res.data)
-         setLoading(false)
       } catch(err) {
          console.error('Error fetching incomes in context:', err);
          setError(err);
-         setLoading(false)
       } 
    }
 
@@ -88,11 +92,9 @@ export const GlobalProvider = ({ children }) => {
          const res = await axios.get(`${BASE_URL}incomes/${user_id}`)
          console.log(res.data)
          setIncomes(res.data)
-         setLoading(false)
       } catch(err) {
          console.error('Error fetching incomes in context:', err);
          setError(err);
-         setLoading(false)
       }
    }
 
@@ -184,7 +186,8 @@ export const GlobalProvider = ({ children }) => {
          expensesByFiltered,
          incomesByFiltered, 
          totalExpensesFiltered,
-         totalIncomesFiltered
+         totalIncomesFiltered,
+         loggedUser
       }}>
          {children}
       </GlobalContext.Provider>

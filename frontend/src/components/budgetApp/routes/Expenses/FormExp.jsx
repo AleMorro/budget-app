@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
 import CardFilter from '../Home/CardFilter'
+import Form from './Form.jsx';
 
 function FormExp() {
-
-   const [filter, setFilter] = useState('Today')
-   const handleFilterChange = filter => {
-      setFilter(filter)
-   };
 
    return (
       <div className='card'>
@@ -14,6 +10,8 @@ function FormExp() {
             <h5 className="card-title">
                Add expenses
             </h5>
+
+            <Form />
          </div>
 
       </div>

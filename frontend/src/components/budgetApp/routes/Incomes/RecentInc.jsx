@@ -24,7 +24,7 @@ function RecentInc() {
 
       console.log("fetch data for recentIncomes")
 
-      if (loading) return;
+      // if (loading) return;
 
       let targetValue;
       const today = new Date();
@@ -50,7 +50,7 @@ function RecentInc() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [filter, loading])
+   }, [filter])
 
    return (
       <div className='card recent'>

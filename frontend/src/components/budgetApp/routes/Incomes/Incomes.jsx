@@ -14,29 +14,27 @@ import RecentInc from "./RecentInc.jsx";
 function Incomes() {
 
    return(
-      <GlobalProvider>
-         <main id='main' className='main'>
-            <PageTitle page="Incomes"/>
+      <main id='main' className='main'>
+         <PageTitle page="Incomes"/>
 
-            <section className="dashboard section">
-               <div className="row">
-                  <div className="col-lg-12 col-md-12">
-                     <div className="row">
-                        
-                        <div className="col-12">
-                           <FormInc />
-                        </div>
-                        <div className="col-12">
-                           <RecentInc />
-                        </div>
-
+         <section className="dashboard section">
+            <div className="row">
+               <div className="col-lg-12 col-md-12">
+                  <div className="row">
+                     
+                     <div className="col-12">
+                        <FormInc />
                      </div>
+                     <div className="col-12">
+                        <RecentInc />
+                     </div>
+
                   </div>
                </div>
-            </section>
+            </div>
+         </section>
 
-         </main>
-      </GlobalProvider>
+      </main>
    )
 }
 
