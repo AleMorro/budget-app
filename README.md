@@ -28,7 +28,7 @@ The technology stack used depends directly on the classic division in which web 
    * date-fns: modern JavaScript date utility library
 ## Image of main application
 Here an image to show an example of how the main view of the application is (Home.jsx component)
-![screen](/ReadmeImg/budget-app_screenshot.png)
+![screen](/assets/budget-app_screenshot.png)
 ## Contributing
 Contribution to budget-app is welcome! If you have an idea for a new feature or bug fix, please open an issue or a pull request
 
