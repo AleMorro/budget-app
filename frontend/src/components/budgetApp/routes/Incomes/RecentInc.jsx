@@ -9,12 +9,13 @@ import '../../styles/SearchBar.css'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 
-function Recent() {
+function RecentInc() {
 
    const { incomesByFiltered, loading } = useGlobalContext();
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('Today')
+
    const handleFilterChange = filter => {
       setFilter(filter)
    };
@@ -23,7 +24,7 @@ function Recent() {
 
       console.log("fetch data for recentIncomes")
 
-      if (loading) return;
+      // if (loading) return;
 
       let targetValue;
       const today = new Date();
@@ -46,7 +47,9 @@ function Recent() {
    }
 
    useEffect(() => {
-      fetchDataByFilter()
+      if(!loading) {
+         fetchDataByFilter()
+      }
    }, [filter])
 
    return (
@@ -65,4 +68,4 @@ function Recent() {
    )
 }
 
-export default Recent
+export default RecentInc

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Component } from 'react'
 import CardFilter from '../Home/CardFilter'
 
 /*
@@ -15,15 +15,16 @@ function RecentExp() {
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('Today')
+
    const handleFilterChange = filter => {
       setFilter(filter)
    };
 
    const fetchDataByFilter = () => {
 
-      console.log("fetch data for recentIncomes")
+      console.log("fetch data for recentExpenses")
 
-      if (loading) return;
+      // if (loading) return;
 
       let targetValue;
       const today = new Date();
@@ -46,7 +47,9 @@ function RecentExp() {
    }
 
    useEffect(() => {
-      fetchDataByFilter()
+      if(!loading) {
+         fetchDataByFilter()
+      }
    }, [filter])
 
    return (

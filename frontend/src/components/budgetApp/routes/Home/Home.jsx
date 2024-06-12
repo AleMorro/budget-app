@@ -9,12 +9,10 @@ import { GlobalProvider } from '../../../../context/globalContext.jsx'
 function Home() {
 
    return(
-      <GlobalProvider>
-         <main id='main' className='main'>
-            <PageTitle page="Home"/>
-            <Dashboard />
-         </main>
-      </GlobalProvider>
+      <main id='main' className='main'>
+         <PageTitle page="Home"/>
+         <Dashboard />
+      </main>
    )
 }
 

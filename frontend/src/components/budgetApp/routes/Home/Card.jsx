@@ -66,12 +66,10 @@ function Card( {card} ) {
             trend = (balanceData / previousBalData) - 1
          }
 
-         console.log("PREVIOUS: ", 1000)
-
          if(trend === Infinity) setRenderedTrend(1)
+         else if(trend === -Infinity) setRenderedTrend(-1)
          else if(isNaN(trend)) setRenderedTrend(0)
-         else if(card.name === 'Expenses') setRenderedTrend(trend.toFixed(2))
-         else setRenderedTrend(trend.toFixed(2));
+         else setRenderedTrend(trend.toPrecision(2))
 
       } catch(err) {
          console.error("Error fetching data: ", err)
@@ -126,8 +124,8 @@ function Card( {card} ) {
                className={`${renderColor()} small pt-1 fw-bold`}
             >
                {renderedTrend > 0
-                  ? renderedTrend * 100
-                  : renderedTrend * 100}
+                  ? Math.round(renderedTrend * 100)
+                  : Math.round(renderedTrend * 100)}
                %
             </span>
             <span className="text-muted small pt-2 ps-1">
