@@ -7,7 +7,6 @@ import 'remixicon/fonts/remixicon.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 // import components
-import LandingPage from "./components/landingPage/LandingPage"
 import Login from "./components/login/Login"
 import AppLayout from "./components/budgetApp/AppLayout";
 import Home from "./components/budgetApp/routes/Home/Home";
