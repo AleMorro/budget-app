@@ -10,7 +10,7 @@ function Card( {card} ) {
 
    const { loading, totalIncomesFiltered, totalExpensesFiltered } = useGlobalContext()
    
-   const [filter, setFilter] = useState("Today");
+   const [filter, setFilter] = useState("This Week");
    const [renderedData, setRenderedData] = useState(null);
    const [renderedTrend, setRenderedTrend] = useState(0)
 
@@ -31,7 +31,7 @@ function Card( {card} ) {
          const today = new Date();
 
          switch (filter) {
-            case 'Today':
+            case 'This Week':
                targetValue = today.getDate();
                break;
             case 'This Month':

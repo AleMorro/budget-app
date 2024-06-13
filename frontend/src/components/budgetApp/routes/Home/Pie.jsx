@@ -4,7 +4,7 @@ import PieCharts from './PieCharts';
 
 function Pie() {
 
-   const [filter, setFilter] = useState('Today')
+   const [filter, setFilter] = useState('This Week')
    const handleFilterChange = filter => {
       setFilter(filter)
    };

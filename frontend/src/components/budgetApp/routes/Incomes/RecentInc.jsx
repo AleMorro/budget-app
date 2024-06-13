@@ -14,7 +14,7 @@ function RecentInc() {
    const { incomesByFiltered, loading } = useGlobalContext();
 
    const [items, setItems] = useState([])
-   const [filter, setFilter] = useState('Today')
+   const [filter, setFilter] = useState('This Week')
 
    const handleFilterChange = filter => {
       setFilter(filter)
@@ -30,7 +30,7 @@ function RecentInc() {
       const today = new Date();
 
       switch (filter) {
-         case 'Today':
+         case 'This Week':
             targetValue = today.getDate();
             break;
          case 'This Month':

@@ -38,7 +38,7 @@ function PieCharts( { filter }) {
       const today = new Date();
 
       switch (filter) {
-         case 'Today':
+         case 'This Week':
             targetValue = today.getDate();
             break;
          case 'This Month':

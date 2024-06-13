@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
 //import Home from '../components/budgetApp/routes/Home/Home.jsx'
 
-const { parseISO, getDate, getMonth, getYear } = require('date-fns')
+const { parseISO, getDate, getMonth, getYear, getWeekYear, getISOWeek } = require('date-fns')
 
 const BASE_URL = "http://localhost:5000/api/";
 
@@ -63,15 +63,6 @@ export const GlobalProvider = ({ children }) => {
       } 
    }
 
-   const expensesByFiltered = (filter, targetValue) => {
-      let filterExpense =  getFilteredData(expenses, filter, targetValue);
-
-      filterExpense.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      // Restituisci i dati ordinati
-      return filterExpense;
-   };
-
    const totalExpensesFiltered = (filter, targetValue) => {
       let filterExpense = getFilteredData(expenses, filter, targetValue)
 
@@ -82,6 +73,14 @@ export const GlobalProvider = ({ children }) => {
 
       return total
    }
+
+   const expensesByFiltered = (filter, targetValue) => {
+      let filterExpense =  getFilteredData(expenses, filter, targetValue);
+
+      filterExpense.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      return filterExpense;
+   };
 
    // to implement: deleteExpense
 
@@ -134,12 +133,16 @@ export const GlobalProvider = ({ children }) => {
     * GENERAL
    *************/
 
-   const filterByDay = (dateString, targetDay) => {
-      const date = parseISO(dateString)
-      return getDate(date) === targetDay 
-               && getMonth(date) === new Date().getMonth()
-               && getYear(date) === new Date().getFullYear()
-   };
+   const filterByWeek = (dateString, targetDay) => {
+      const date = parseISO(dateString);
+      const today = new Date();
+      today.setDate(targetDay); // Imposta il giorno corrente
+    
+      const targetWeek = getISOWeek(today);
+      const targetYear = getYear(today);
+    
+      return getISOWeek(date) === targetWeek && getYear(date) === targetYear;
+    };
    
    const filterByMonth = (dateString, targetMonth) => {
       const date = parseISO(dateString);
@@ -159,8 +162,8 @@ export const GlobalProvider = ({ children }) => {
    const getFilteredData = (data, filter, targetValue) => {
       let filteredData;
       switch (filter) {
-         case 'Today':
-            filteredData = data.filter(item => filterByDay(item.date, targetValue));
+         case 'This Week':
+            filteredData = data.filter(item => filterByWeek(item.date, targetValue));
             break;
          case 'This Month':
             filteredData = data.filter(item => filterByMonth(item.date, targetValue));
