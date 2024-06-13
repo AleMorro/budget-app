@@ -1,18 +1,38 @@
 import React, { useState } from 'react'
 import './styles/Login.css'
-import { Navigate, Route, redirect, useHistory, useNavigate } from 'react-router-dom'
+
+import { useNavigate } from 'react-router-dom'
+
+import { useGlobalContext } from '../../context/globalContext';
 
 function Login() {
 
+   const { doLogin } = useGlobalContext()
+
    const[action, setAction] = useState("Sign Up");
    const[isLoggedIn, setIsLoggedIn] = useState(false)
+   const [error, setError] = useState(null);
 
    let navigate = useNavigate()
 
-   const handleSubmit = async(e) => {
-      e.preventDefault()
-      navigate("/app")
-   }
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+
+      const email = form.email.value;
+      const password = form.password.value;
+
+      console.log(`Form submitted with email: ${email} and password: ${password}`);
+
+      if (form.checkValidity()) {
+         try {
+            const user = await doLogin(email, password);
+            navigate("/app");
+         } catch (error) {
+            setError(error.message);
+         }
+      }
+   };
 
    return (
 

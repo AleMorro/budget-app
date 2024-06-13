@@ -2,6 +2,7 @@
 
 const db = require('./db.js');
 
+
 // GET functions
 
 /**
@@ -27,4 +28,22 @@ exports.getAllUsers = function() {
    });
 }
 
-// POST functions
+exports.getUser = function(email) {
+   return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM users WHERE users.email = ?';
+      db.get(sql, [email], (err, row) => {
+         if (err) reject(err);
+         else resolve(row);
+      });
+   });
+};
+
+exports.getUserById = function(id) {
+   return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM users WHERE users.user_id = ?';
+      db.get(sql, [id], (err, row) => {
+         if (err) reject(err);
+         else resolve(row);
+      });
+   });
+};

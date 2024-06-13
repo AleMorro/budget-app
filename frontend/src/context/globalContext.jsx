@@ -22,18 +22,22 @@ export const GlobalProvider = ({ children }) => {
    const[error, setError] = useState(null)
    const[loading, setLoading] = useState(true)
 
-   const[loggedUser, setLoggedUser] = useState(null)
+   const[loggedUser, setLoggedUser] = useState(() => {
+      const savedUser = localStorage.getItem('loggedUser')
+      return savedUser ? JSON.parse(savedUser) : { user_id: null}
+   })
 
    // useEffect hook to fetch data from backend when the
    // the globalContext is mounted
    useEffect(() => {
-      console.log("GlobalContext useEffect:")
-      getIncomes(1)
-      getExpenses(1)
-      setLoggedUser(1)
       setLoading(false)
+      console.log("GlobalContext useEffect:")
+      console.log("LoggedUserId: ", loggedUser)
+      getIncomes(loggedUser.user_id)
+      getExpenses(loggedUser.user_id)
+
       console.log("User Logged: ", loggedUser)
-   }, [])
+   }, [loggedUser])
 
    /************ 
     * EXPENSES
@@ -160,23 +164,22 @@ export const GlobalProvider = ({ children }) => {
       return filteredData;
    };
 
-   /************ 
-    * LOGIN/LOGOUT FUNCTIONALITY
-   *************/   
-
-   
-   /*
-   const getUsers = async () => {
+   const doLogin = async (email, password) => {
       try {
-         const res = await axios.get(`${BASE_URL}users`);
-         setUsers(res.data);
-         console.log(res.data);
-      } catch (error) {
-         console.error('Error fetching users:', error);
-         setError(error);
+         console.log(`Attempting login with email: ${email} and password: ${password}`);
+         const res = await axios.post(`${BASE_URL}sessions`, { email, password });
+         const user = res.data
+         localStorage.setItem('loggedUser', JSON.stringify(user))
+         setLoggedUser(user);
+         return res.data;
+      } catch (err) {
+         if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+         } else {
+            throw new Error('Login failed. Please check your credentials and try again.');
+         }
       }
    };
-   */
 
    return (
       <GlobalContext.Provider value={{ 
@@ -191,7 +194,8 @@ export const GlobalProvider = ({ children }) => {
          incomesByFiltered, 
          totalExpensesFiltered,
          totalIncomesFiltered,
-         loggedUser
+         loggedUser,
+         doLogin
       }}>
          {children}
       </GlobalContext.Provider>
