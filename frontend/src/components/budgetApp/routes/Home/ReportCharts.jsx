@@ -103,8 +103,7 @@ function ReportCharts({ filter }) {
       setChartData({
          series: [
             { name: 'Incomes', data: incomeData },
-            { name: 'Expenses', data: expenseData },
-            { name: 'Balance', data: balanceData },
+            { name: 'Expenses', data: expenseData }
          ],
          options: {
             ...chartData.options,

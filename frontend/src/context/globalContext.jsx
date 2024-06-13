@@ -64,7 +64,12 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const expensesByFiltered = (filter, targetValue) => {
-      return getFilteredData(expenses, filter, targetValue);
+      let filterExpense =  getFilteredData(expenses, filter, targetValue);
+
+      filterExpense.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // Restituisci i dati ordinati
+      return filterExpense;
    };
 
    const totalExpensesFiltered = (filter, targetValue) => {
@@ -114,7 +119,13 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const incomesByFiltered = (filter, targetValue) => {
-      return getFilteredData(incomes, filter, targetValue);
+      //return getFilteredData(incomes, filter, targetValue);
+      let filterIncomes = getFilteredData(incomes, filter, targetValue)
+
+      filterIncomes.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // Restituisci i dati ordinati
+      return filterIncomes;
    };
    
    // to implement: deleteIncome
@@ -164,6 +175,7 @@ export const GlobalProvider = ({ children }) => {
       return filteredData;
    };
 
+   // Function to perform the login and open a session with backend
    const doLogin = async (email, password) => {
       try {
          console.log(`Attempting login with email: ${email} and password: ${password}`);
