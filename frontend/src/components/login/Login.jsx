@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import './styles/Login.css'
+import { Navigate, Route, redirect, useHistory, useNavigate } from 'react-router-dom'
 
 function Login() {
 
    const[action, setAction] = useState("Sign Up");
+   const[isLoggedIn, setIsLoggedIn] = useState(false)
 
-   const handleSubmit = (e) => {
+   let navigate = useNavigate()
+
+   const handleSubmit = async(e) => {
       e.preventDefault()
-      console.log("Login submitted")
+      navigate("/app")
    }
 
    return (
@@ -22,17 +26,17 @@ function Login() {
              action === "Login" ? 
                <div></div> : 
                <div className="input">
-                  <i class="bi bi-person-add"></i>
+                  <i className="bi bi-person-add"></i>
                   <input type="text" name='name' placeholder='Name' required/>
                </div>
             }
             
             <div className="input">
-               <i class="bi bi-person"></i>
+               <i className="bi bi-person"></i>
                <input type="email" name='email' placeholder='Email' required/>
             </div>
             <div className="input">
-               <i class="bi bi-file-earmark-lock"></i>
+               <i className="bi bi-file-earmark-lock"></i>
                <input type="password" name='password' placeholder='Password' required/>
             </div>
             <div className="submit-container">

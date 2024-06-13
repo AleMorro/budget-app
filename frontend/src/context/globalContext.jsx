@@ -137,10 +137,9 @@ export const GlobalProvider = ({ children }) => {
       return getYear(date) === targetYear;
    };
    
-
    /**
     * Function to filter correct data and return the list of object of 
-    * the correct data needed from the frontend
+    * the data needed from the frontend
     */
    const getFilteredData = (data, filter, targetValue) => {
       let filteredData;
@@ -160,6 +159,11 @@ export const GlobalProvider = ({ children }) => {
       }
       return filteredData;
    };
+
+   /************ 
+    * LOGIN/LOGOUT FUNCTIONALITY
+   *************/   
+
    
    /*
    const getUsers = async () => {
