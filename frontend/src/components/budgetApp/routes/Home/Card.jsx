@@ -5,6 +5,7 @@ import { useGlobalContext } from '../../../../context/globalContext';
 import CardFilter from './CardFilter';
 
 import '../../styles/Card.css'
+import { getISOWeek } from 'date-fns';
 
 function Card( {card} ) {
 
@@ -32,7 +33,7 @@ function Card( {card} ) {
 
          switch (filter) {
             case 'This Week':
-               targetValue = today.getDate();
+               targetValue = getISOWeek(today)
                break;
             case 'This Month':
                targetValue = today.getMonth();

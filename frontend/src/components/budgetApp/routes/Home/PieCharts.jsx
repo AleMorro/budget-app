@@ -3,6 +3,7 @@ import Chart from 'react-apexcharts'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 import { useCallback, useEffect } from 'react';
+import { getISOWeek } from 'date-fns';
 
 function PieCharts( { filter }) {
 
@@ -39,7 +40,7 @@ function PieCharts( { filter }) {
 
       switch (filter) {
          case 'This Week':
-            targetValue = today.getDate();
+            targetValue = getISOWeek(today);
             break;
          case 'This Month':
             targetValue = today.getMonth();

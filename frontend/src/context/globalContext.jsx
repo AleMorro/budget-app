@@ -133,15 +133,21 @@ export const GlobalProvider = ({ children }) => {
     * GENERAL
    *************/
 
-   const filterByWeek = (dateString, targetDay) => {
+   const filterByWeek = (dateString, targetWeek) => {
+      /*
       const date = parseISO(dateString);
       const today = new Date();
       today.setDate(targetDay); // Imposta il giorno corrente
-    
+
+      
       const targetWeek = getISOWeek(today);
-      const targetYear = getYear(today);
-    
+      const targetYear = getYear(today); 
       return getISOWeek(date) === targetWeek && getYear(date) === targetYear;
+      */
+      const date = parseISO(dateString)
+      return getISOWeek(date) === targetWeek
+               && getYear(date) === new Date().getFullYear()
+    
     };
    
    const filterByMonth = (dateString, targetMonth) => {

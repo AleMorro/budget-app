@@ -8,6 +8,7 @@ import '../../styles/SearchBar.css'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 import RecentExpTab from './RecentExpTab';
+import { getISOWeek, toDate } from 'date-fns';
 
 function RecentExp() {
 
@@ -31,7 +32,7 @@ function RecentExp() {
 
       switch (filter) {
          case 'This Week':
-            targetValue = today.getDate();
+            targetValue = getISOWeek(today)
             break;
          case 'This Month':
             targetValue = today.getMonth();

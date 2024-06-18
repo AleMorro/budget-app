@@ -8,6 +8,7 @@ import '../../styles/SearchBar.css'
 */
 
 import { useGlobalContext } from '../../../../context/globalContext';
+import { getISOWeek } from 'date-fns';
 
 function RecentInc() {
 
@@ -31,7 +32,7 @@ function RecentInc() {
 
       switch (filter) {
          case 'This Week':
-            targetValue = today.getDate();
+            targetValue = getISOWeek(today);
             break;
          case 'This Month':
             targetValue = today.getMonth();
