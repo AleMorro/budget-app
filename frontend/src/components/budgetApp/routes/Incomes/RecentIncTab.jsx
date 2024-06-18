@@ -1,6 +1,7 @@
 import React from 'react'
 
 function RecentIncTab( { items } ) {
+
    return (
       
       <table className="table table-borderless datatable">
@@ -10,6 +11,7 @@ function RecentIncTab( { items } ) {
                <th scope="col">Date</th>
                <th scope="col">Description</th>
                <th scope="col">Amount</th>
+               <th scope='col'>Delete</th>
             </tr>
          </thead>
       
@@ -27,6 +29,9 @@ function RecentIncTab( { items } ) {
                            <span className='badge bg-success'>
                               €{item.amount.toFixed(2)}
                            </span>
+                        </td>
+                        <td>
+                           <i class="bi bi-trash"></i>
                         </td>
                      </tr>
                   ))}
