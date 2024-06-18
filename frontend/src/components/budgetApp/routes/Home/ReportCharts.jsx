@@ -60,7 +60,6 @@ function ReportCharts({ filter }) {
 
       let incomeData = [];
       let expenseData = [];
-      let balanceData = [];
 
       let incomeCategories = [];
       let expenseCategories = [];

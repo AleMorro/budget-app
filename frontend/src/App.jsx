@@ -15,6 +15,8 @@ import Incomes from "./components/budgetApp/routes/Incomes/Incomes";
 import Budget from "./components/budgetApp/routes/Budget/Budget";
 import Cashflow from "./components/budgetApp/routes/Wallets/Wallets";
 
+import { GlobalProvider } from './context/globalContext.jsx'
+
 // import stylesheet
 import "./App.css"
 
