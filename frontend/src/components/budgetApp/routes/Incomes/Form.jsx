@@ -16,9 +16,10 @@ function Form() {
 
       console.log("Submit handle Income")
       e.preventDefault()
-
+      const user_id = loggedUser.user_id
+      
       const income = {
-          user_id: loggedUser,
+          user_id: user_id,
           category,
           date,
           amount: parseFloat(amount),

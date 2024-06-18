@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
 //import Home from '../components/budgetApp/routes/Home/Home.jsx'
 
-const { parseISO, getDate, getMonth, getYear } = require('date-fns')
+const { parseISO, getDate, getMonth, getYear, getWeekYear, getISOWeek } = require('date-fns')
 
 const BASE_URL = "http://localhost:5000/api/";
 
@@ -22,18 +22,22 @@ export const GlobalProvider = ({ children }) => {
    const[error, setError] = useState(null)
    const[loading, setLoading] = useState(true)
 
-   const[loggedUser, setLoggedUser] = useState(null)
+   const[loggedUser, setLoggedUser] = useState(() => {
+      const savedUser = localStorage.getItem('loggedUser')
+      return savedUser ? JSON.parse(savedUser) : { user_id: null}
+   })
 
    // useEffect hook to fetch data from backend when the
    // the globalContext is mounted
    useEffect(() => {
-      console.log("GlobalContext useEffect:")
-      getIncomes(1)
-      getExpenses(1)
-      setLoggedUser(1)
       setLoading(false)
+      console.log("GlobalContext useEffect:")
+      console.log("LoggedUserId: ", loggedUser)
+      getIncomes(loggedUser.user_id)
+      getExpenses(loggedUser.user_id)
+
       console.log("User Logged: ", loggedUser)
-   }, [])
+   }, [loggedUser])
 
    /************ 
     * EXPENSES
@@ -59,10 +63,6 @@ export const GlobalProvider = ({ children }) => {
       } 
    }
 
-   const expensesByFiltered = (filter, targetValue) => {
-      return getFilteredData(expenses, filter, targetValue);
-   };
-
    const totalExpensesFiltered = (filter, targetValue) => {
       let filterExpense = getFilteredData(expenses, filter, targetValue)
 
@@ -73,6 +73,14 @@ export const GlobalProvider = ({ children }) => {
 
       return total
    }
+
+   const expensesByFiltered = (filter, targetValue) => {
+      let filterExpense =  getFilteredData(expenses, filter, targetValue);
+
+      filterExpense.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      return filterExpense;
+   };
 
    // to implement: deleteExpense
 
@@ -110,7 +118,13 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const incomesByFiltered = (filter, targetValue) => {
-      return getFilteredData(incomes, filter, targetValue);
+      //return getFilteredData(incomes, filter, targetValue);
+      let filterIncomes = getFilteredData(incomes, filter, targetValue)
+
+      filterIncomes.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // Restituisci i dati ordinati
+      return filterIncomes;
    };
    
    // to implement: deleteIncome
@@ -119,12 +133,22 @@ export const GlobalProvider = ({ children }) => {
     * GENERAL
    *************/
 
-   const filterByDay = (dateString, targetDay) => {
+   const filterByWeek = (dateString, targetWeek) => {
+      /*
+      const date = parseISO(dateString);
+      const today = new Date();
+      today.setDate(targetDay); // Imposta il giorno corrente
+
+      
+      const targetWeek = getISOWeek(today);
+      const targetYear = getYear(today); 
+      return getISOWeek(date) === targetWeek && getYear(date) === targetYear;
+      */
       const date = parseISO(dateString)
-      return getDate(date) === targetDay 
-               && getMonth(date) === new Date().getMonth()
+      return getISOWeek(date) === targetWeek
                && getYear(date) === new Date().getFullYear()
-   };
+    
+    };
    
    const filterByMonth = (dateString, targetMonth) => {
       const date = parseISO(dateString);
@@ -137,16 +161,15 @@ export const GlobalProvider = ({ children }) => {
       return getYear(date) === targetYear;
    };
    
-
    /**
     * Function to filter correct data and return the list of object of 
-    * the correct data needed from the frontend
+    * the data needed from the frontend
     */
    const getFilteredData = (data, filter, targetValue) => {
       let filteredData;
       switch (filter) {
-         case 'Today':
-            filteredData = data.filter(item => filterByDay(item.date, targetValue));
+         case 'This Week':
+            filteredData = data.filter(item => filterByWeek(item.date, targetValue));
             break;
          case 'This Month':
             filteredData = data.filter(item => filterByMonth(item.date, targetValue));
@@ -160,19 +183,24 @@ export const GlobalProvider = ({ children }) => {
       }
       return filteredData;
    };
-   
-   /*
-   const getUsers = async () => {
+
+   // Function to perform the login and open a session with backend
+   const doLogin = async (email, password) => {
       try {
-         const res = await axios.get(`${BASE_URL}users`);
-         setUsers(res.data);
-         console.log(res.data);
-      } catch (error) {
-         console.error('Error fetching users:', error);
-         setError(error);
+         console.log(`Attempting login with email: ${email} and password: ${password}`);
+         const res = await axios.post(`${BASE_URL}sessions`, { email, password });
+         const user = res.data
+         localStorage.setItem('loggedUser', JSON.stringify(user))
+         setLoggedUser(user);
+         return res.data;
+      } catch (err) {
+         if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+         } else {
+            throw new Error('Login failed. Please check your credentials and try again.');
+         }
       }
    };
-   */
 
    return (
       <GlobalContext.Provider value={{ 
@@ -187,7 +215,8 @@ export const GlobalProvider = ({ children }) => {
          incomesByFiltered, 
          totalExpensesFiltered,
          totalIncomesFiltered,
-         loggedUser
+         loggedUser,
+         doLogin
       }}>
          {children}
       </GlobalContext.Provider>

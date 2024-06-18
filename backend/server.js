@@ -8,10 +8,53 @@ const expenseDao = require('./db/expense_dao');
 const userDao = require('./db/users_dao');
 const path = require('path');
 
+const passport = require('passport'); // auth middleware
+const LocalStrategy = require('passport-local').Strategy; // email and password for login
+const session = require('express-session');
+const { result } = require('lodash');
+
 const {check, validationResult} = require('express-validator');
 const db = require('./db/db');
 const exp = require('constants');
 const { error } = require('console');
+const bcrypt = require('bcrypt')
+
+// Configurazione strategia Passport
+passport.use(new LocalStrategy(
+   { usernameField: 'email', passwordField: 'password' },
+   function(email, password, done) {
+      userDao.getUser(email).then(user => {
+         if (!user) {
+            return done(null, false, { message: 'Incorrect username' });
+         } /*
+         bcrypt.compare(password, user.password, (err, res) => {
+            if (res) {
+                  return done(null, user);
+            } else {
+                  return done(null, false, { message: 'Incorrect password' });
+            }
+         }); */
+         if(password === user.password ) {
+            return done(null, user)
+         }
+         else {
+         console.log("Passoword sbagliata")
+         return
+         }
+      }).catch(err => done(err));
+   }
+));
+
+// serialize and de-serialize the user (user object <-> session)
+passport.serializeUser(function(user, done) {
+   done(null, user.user_id);
+});
+
+passport.deserializeUser(function(id, done) {
+   userDao.getUserById(id).then(user => {
+      done(null, user);
+   }).catch(err => done(err, null))
+});
 
 // init
 const app = express();
@@ -27,33 +70,53 @@ app.use(cors())
 // interpreting json-encoded parameters
 app.use(express.json());
 
-// REST API
 
-// GET
+// set up the session
+app.use(session({
+   secret: 'a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie',
+   resave: false,
+   saveUninitialized: false,
+   cookie: { sameSite: 'lax' }
+}));
+
+// init passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+const isLoggedIn = (req, res, next) => {
+   if(req.isAuthenticated()){
+      return next();
+   }
+   return res.status(401).json({"statusCode" : 401, "message" : "not authenticated"});
+}
+
+/***
+ * REST API
+***/
+
+/************ 
+ * GET
+*************/
 
 // get all incomes by id
-app.get('/api/incomes/:id', (req, res) => {
+app.get('/api/incomes/:id', /*isLoggedIn,*/  (req, res) => {
    incomeDao.getAllIncomes(req.params.id)
       .then(incomes => res.json(incomes))
       .catch(error => res.status(500).json({ error: error.message }));
 });
 // get all expenses by id
-app.get('/api/expenses/:id', (req, res) => {
+app.get('/api/expenses/:id', /*isLoggedIn,*/  (req, res) => {
    expenseDao.getAllExpenses(req.params.id)
       .then(expenses => res.json(expenses))
       .catch(error => res.status(500).json({ error: error.message}));
 })
-// get all users
-app.get('/api/users', (req, res) => {
-   userDao.getAllUsers()
-      .then(users => res.json(users))
-      .catch(error => res.status(500).json({ error: error.message}));
-})
 
-// POST
+/************ 
+ * POST
+*************/
 
 // post a expense
-app.post('/api/addExpense', /* [add here some validity checks], */ (req, res) => {
+app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
    const expense = {
      user_id: req.body.user_id,
      category: req.body.category,
@@ -68,7 +131,7 @@ app.post('/api/addExpense', /* [add here some validity checks], */ (req, res) =>
 });
 
 // post a income
-app.post('/api/addIncome', /* [add here some validity checks], */ (req, res) => {
+app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
    const income = {
      user_id: req.body.user_id,
      category: req.body.category,
@@ -82,6 +145,32 @@ app.post('/api/addIncome', /* [add here some validity checks], */ (req, res) => 
    .catch((err) => res.status(503).json({error: err.message}));
 });
 
+// SESSIONS 
+
+// Login
+app.post('/api/sessions', function(req, res, next) {
+   console.log(`Received login request: ${JSON.stringify(req.body)}`); // Log dei dati ricevuti
+   passport.authenticate('local', function(err, user, info) {
+      if (err) { return next(err); }
+      if (!user) {
+         return res.status(401).json(info);
+      }
+      req.login(user, function(err) {
+         if (err) { return next(err); }
+         return res.json(user);
+      });
+   })(req, res, next);
+});
+/*
+// DELETE /sessions/current 
+// Logout
+app.delete('/api/sessions/current', function(req, res){
+   req.logout(function(err) {
+      if (err) { return res.status(503).json(err); }
+   });
+   res.end();
+});
+*/
 // Check if the server is connected
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)

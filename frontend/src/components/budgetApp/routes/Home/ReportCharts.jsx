@@ -3,6 +3,7 @@ import Chart from 'react-apexcharts';
 
 import { useGlobalContext } from '../../../../context/globalContext';
 import { useCallback } from 'react';
+import { getISOWeek } from 'date-fns';
 
 function ReportCharts({ filter }) {
 
@@ -25,7 +26,7 @@ function ReportCharts({ filter }) {
          markers: {
             size: 4,
          },
-         colors: ['#4154f1', '#2eca6a'],
+         colors: ['#4154f1', '#b83941'],
          fill: {
             type: 'gradient',
             gradient: {
@@ -68,8 +69,8 @@ function ReportCharts({ filter }) {
       const today = new Date();
 
       switch (filter) {
-         case 'Today':
-            targetValue = today.getDate();
+         case 'This Week':
+            targetValue = getISOWeek(today);
             break;
          case 'This Month':
             targetValue = today.getMonth();
@@ -103,8 +104,7 @@ function ReportCharts({ filter }) {
       setChartData({
          series: [
             { name: 'Incomes', data: incomeData },
-            { name: 'Expenses', data: expenseData },
-            { name: 'Balance', data: balanceData },
+            { name: 'Expenses', data: expenseData }
          ],
          options: {
             ...chartData.options,
