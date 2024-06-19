@@ -1,6 +1,11 @@
 import React from 'react'
 
+import { useGlobalContext } from '../../../../context/globalContext';
+
 function RecentExpTab( { items } ) {
+
+   const { deleteExpense } = useGlobalContext();
+
    return (
       
       <table className="table table-borderless datatable">
@@ -27,6 +32,9 @@ function RecentExpTab( { items } ) {
                            <span className='badge bg-danger'>
                               €{item.amount.toFixed(2)}
                            </span>
+                        </td>
+                        <td>
+                           <i class="bi bi-trash" onClick={ () => deleteExpense(item.id) }></i>
                         </td>
                      </tr>
                   ))}

@@ -1,6 +1,10 @@
 import React from 'react'
 
+import { useGlobalContext } from '../../../../context/globalContext';
+
 function RecentIncTab( { items } ) {
+
+   const { deleteIncome } = useGlobalContext();
 
    return (
       
@@ -31,7 +35,7 @@ function RecentIncTab( { items } ) {
                            </span>
                         </td>
                         <td>
-                           <i class="bi bi-trash"></i>
+                           <i class="bi bi-trash" onClick={ () => deleteIncome(item.id) }></i>
                         </td>
                      </tr>
                   ))}
