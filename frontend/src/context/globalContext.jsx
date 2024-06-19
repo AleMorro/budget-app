@@ -95,6 +95,10 @@ export const GlobalProvider = ({ children }) => {
       getIncomes(income.user_id);
    }
 
+   const deleteIncome = async(id) => {
+      
+   }
+
    const getIncomes = async(user_id) => {
       try {
          const res = await axios.get(`${BASE_URL}incomes/${user_id}`)
