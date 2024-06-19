@@ -50,3 +50,17 @@ exports.addExpense = function(expense) {
       });
   });
 } 
+
+// DELETE functions
+exports.deleteExpenseById = function(id) {
+   return new Promise((resolve, reject) => {
+      const sql = 'DELETE FROM expenses WHERE id = ?';
+      db.run(sql, [id], (err) => {
+         if(err) {
+            reject(err)
+            return
+         }
+         resolve(this.changes)
+      })
+   })
+}
