@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react'
 import CardFilter from '../Home/CardFilter'
 import RecentIncTab from './RecentIncTab';
 
-/*
-import SearchBar from '../../SearchBar'
-import '../../styles/SearchBar.css'
-*/
+import SearchBar from '../SearchBar'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 import { getISOWeek } from 'date-fns';
@@ -61,7 +58,7 @@ function RecentInc() {
             <h5 className="card-title">
                Recent incomes <span>/{filter}</span>
             </h5>
-            {/* Add the searchBar */}
+            <SearchBar />
             <RecentIncTab items={items}/>
          </div>
 

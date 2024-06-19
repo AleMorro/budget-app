@@ -15,6 +15,8 @@ function RecentExpTab( { items } ) {
                <th scope="col">Date</th>
                <th scope="col">Description</th>
                <th scope="col">Amount</th>
+               <th scope="col">Delete</th>
+
             </tr>
          </thead>
       
