@@ -96,7 +96,7 @@ export const GlobalProvider = ({ children }) => {
    }
 
    const deleteIncome = async(id) => {
-      
+      console.log("Id passed to deletIncome: ", id)
    }
 
    const getIncomes = async(user_id) => {
@@ -210,7 +210,8 @@ export const GlobalProvider = ({ children }) => {
          totalExpensesFiltered,
          totalIncomesFiltered,
          loggedUser,
-         doLogin
+         doLogin,
+         deleteIncome
       }}>
          {children}
       </GlobalContext.Provider>

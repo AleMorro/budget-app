@@ -115,6 +115,22 @@ app.get('/api/expenses/:id', /*isLoggedIn,*/  (req, res) => {
  * POST
 *************/
 
+
+// post a income
+app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
+   const income = {
+      user_id: req.body.user_id,
+      category: req.body.category,
+      date: req.body.date,
+      description: req.body.description,
+      amount: req.body.amount
+   };
+   
+   incomeDao.addIncome(income)
+   .then((result) => res.status(201).header('Location', `/incomes/${result}`).end())
+   .catch((err) => res.status(503).json({error: err.message}));
+});
+
 // post a expense
 app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
    const expense = {
@@ -130,22 +146,37 @@ app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
    .catch((err) => res.status(503).json({error: err.message}));
 });
 
-// post a income
-app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
-   const income = {
-     user_id: req.body.user_id,
-     category: req.body.category,
-     date: req.body.date,
-     description: req.body.description,
-     amount: req.body.amount
-   };
+/************ 
+ * DELETE
+*************/
 
-   incomeDao.addIncome(income)
-   .then((result) => res.status(201).header('Location', `/incomes/${result}`).end())
-   .catch((err) => res.status(503).json({error: err.message}));
+app.delete('/api/deleteIncome/:id', /*isLoggedIn*/ (req, res) => {
+   incomeDao.deleteIncomeById(req.params.id)
+      .then(changes => {
+         if (changes === 0) {
+            res.status(404).json({ error: 'Income not found' }); // Nessuna riga eliminata
+         } else {
+            res.status(200).json({ message: 'Income deleted successfully' }); // Eliminazione riuscita
+         }
+      })
+      .catch(error => res.status(500).json({ error: error.message }));
 });
 
-// SESSIONS 
+app.delete('/api/deleteExpense/:id', /*isLoggedIn*/ (req, res) => {
+   expenseDao.deleteExpenseById(req.params.id)
+      .then(changes => {
+         if (changes === 0) {
+            res.status(404).json({ error: 'Expense not found' }); // Nessuna riga eliminata
+         } else {
+            res.status(200).json({ message: 'Expense deleted successfully' }); // Eliminazione riuscita
+         }
+      })
+      .catch(error => res.status(500).json({ error: error.message }));
+});
+
+/************ 
+ * SESSIONS
+*************/
 
 // Login
 app.post('/api/sessions', function(req, res, next) {
