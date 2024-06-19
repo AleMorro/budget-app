@@ -52,6 +52,16 @@ export const GlobalProvider = ({ children }) => {
       getExpenses(expense.user_id);
    }
 
+   const deleteExpense = async(id) => {
+      console.log("Id passed to deleteExpense: ", id)
+
+      const res = await axios.delete(`${BASE_URL}deleteExpense/${id}`)
+         .catch((err) => {
+            setError(err.message)
+         })
+      getExpenses(loggedUser.user_id)
+   }
+
    const getExpenses = async(user_id) => {
       try {
          const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
@@ -97,6 +107,12 @@ export const GlobalProvider = ({ children }) => {
 
    const deleteIncome = async(id) => {
       console.log("Id passed to deletIncome: ", id)
+
+      const res = await axios.delete(`${BASE_URL}deleteIncome/${id}`)
+         .catch((err) => {
+            setError(err.message)
+         })
+      getIncomes(loggedUser.user_id)
    }
 
    const getIncomes = async(user_id) => {
@@ -211,7 +227,8 @@ export const GlobalProvider = ({ children }) => {
          totalIncomesFiltered,
          loggedUser,
          doLogin,
-         deleteIncome
+         deleteIncome,
+         deleteExpense
       }}>
          {children}
       </GlobalContext.Provider>

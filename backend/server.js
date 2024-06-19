@@ -115,7 +115,6 @@ app.get('/api/expenses/:id', /*isLoggedIn,*/  (req, res) => {
  * POST
 *************/
 
-
 // post a income
 app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
    const income = {
