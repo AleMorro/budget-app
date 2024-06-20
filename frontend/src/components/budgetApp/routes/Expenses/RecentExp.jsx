@@ -8,7 +8,7 @@ import SearchBar from '../SearchBar'
 
 function RecentExp() {
 
-   const { expensesByFiltered, loading } = useGlobalContext();
+   const { expensesByFiltered, loading, expenses, getExpenses } = useGlobalContext();
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('This Week')
@@ -17,7 +17,7 @@ function RecentExp() {
       setFilter(filter)
    };
 
-   const fetchDataByFilter = () => {
+   const fetchDataByFilter = async() => {
 
       console.log("fetch data for recentExpenses")
 
@@ -47,7 +47,7 @@ function RecentExp() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [filter])
+   }, [getExpenses])
 
    return (
       <div className='card recent'>

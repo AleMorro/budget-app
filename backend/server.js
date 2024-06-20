@@ -26,21 +26,14 @@ passport.use(new LocalStrategy(
       userDao.getUser(email).then(user => {
          if (!user) {
             return done(null, false, { message: 'Incorrect username' });
-         } /*
+         } 
          bcrypt.compare(password, user.password, (err, res) => {
             if (res) {
                   return done(null, user);
             } else {
                   return done(null, false, { message: 'Incorrect password' });
             }
-         }); */
-         if(password === user.password ) {
-            return done(null, user)
-         }
-         else {
-         console.log("Passoword sbagliata")
-         return
-         }
+         });
       }).catch(err => done(err));
    }
 ));
@@ -191,8 +184,7 @@ app.post('/api/sessions', function(req, res, next) {
       });
    })(req, res, next);
 });
-/*
-// DELETE /sessions/current 
+
 // Logout
 app.delete('/api/sessions/current', function(req, res){
    req.logout(function(err) {
@@ -200,7 +192,25 @@ app.delete('/api/sessions/current', function(req, res){
    });
    res.end();
 });
-*/
+
+// POST /users
+// Sign up
+app.post('/api/addUser', /* isLoggedIn, */ (req, res) => {
+   
+   const user = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+   };
+
+   console.log(`Registration submitted with name: ${user.name}, email: ${user.email} and password: ${user.password}`);
+
+   userDao.createdUser(user)
+   .then((result) => res.status(201).header('Location', `/addUser/${result}`).end())
+   .catch((err) => res.status(503).json({error: err.message}));
+});
+
+
 // Check if the server is connected
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)

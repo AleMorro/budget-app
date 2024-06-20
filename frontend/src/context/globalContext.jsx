@@ -24,17 +24,18 @@ export const GlobalProvider = ({ children }) => {
 
    const[loggedUser, setLoggedUser] = useState(() => {
       const savedUser = localStorage.getItem('loggedUser')
-      return savedUser ? JSON.parse(savedUser) : { user_id: null}
+      return savedUser ? JSON.parse(savedUser) : { user_id: 0}
    })
 
    // useEffect hook to fetch data from backend when the
    // the globalContext is mounted
    useEffect(() => {
-      setLoading(false)
+      setLoading(true)
       console.log("GlobalContext useEffect:")
       console.log("LoggedUserId: ", loggedUser)
       getIncomes(loggedUser.user_id)
       getExpenses(loggedUser.user_id)
+      setLoading(false)
 
       console.log("User Logged: ", loggedUser)
    }, [loggedUser])
@@ -49,7 +50,7 @@ export const GlobalProvider = ({ children }) => {
          .catch((err) => {
             setError(err.message)
          })
-      getExpenses(expense.user_id);
+      await getExpenses(expense.user_id);
    }
 
    const deleteExpense = async(id) => {
@@ -212,6 +213,19 @@ export const GlobalProvider = ({ children }) => {
       }
    };
 
+   const doLogout = async() => {
+      await fetch(`${BASE_URL}sessions/current`)
+      setLoggedUser(0)
+   }
+
+   const doRegistration = async(user) => {
+      console.log("Dentro doRegistration")
+      const res = await axios.post(`${BASE_URL}addUser`, user)
+         .catch((err) => {
+            setError(err.message)
+         })
+   }
+
    return (
       <GlobalContext.Provider value={{ 
          addExpense,
@@ -228,7 +242,9 @@ export const GlobalProvider = ({ children }) => {
          loggedUser,
          doLogin,
          deleteIncome,
-         deleteExpense
+         deleteExpense,
+         doLogout,
+         doRegistration
       }}>
          {children}
       </GlobalContext.Provider>

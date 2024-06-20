@@ -10,7 +10,7 @@ function Logo() {
 
    return (
       <div className="d-flex align-items-center justify-content-between">
-         <a href="/" className='logo d-flex align-items-center'>
+         <a href="/app" className='logo d-flex align-items-center'>
             <span className='d-none d-lg-block'>Budget-app</span>
          </a>
          <i

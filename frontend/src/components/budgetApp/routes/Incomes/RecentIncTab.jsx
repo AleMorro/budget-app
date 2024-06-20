@@ -2,6 +2,8 @@ import React from 'react'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 
+import '../../styles/RecentTab.css'
+
 function RecentIncTab( { items } ) {
 
    const { deleteIncome } = useGlobalContext();

@@ -2,6 +2,8 @@ import React from 'react'
 
 import { useGlobalContext } from '../../../../context/globalContext';
 
+import '../../styles/RecentTab.css'
+
 function RecentExpTab( { items } ) {
 
    const { deleteExpense } = useGlobalContext();
@@ -35,7 +37,7 @@ function RecentExpTab( { items } ) {
                            </span>
                         </td>
                         <td>
-                           <i class="bi bi-trash" onClick={ () => deleteExpense(item.id) }></i>
+                           <i class="bi bi-trash" id='trash-icon' onClick={ () => deleteExpense(item.id) }></i>
                         </td>
                      </tr>
                   ))}

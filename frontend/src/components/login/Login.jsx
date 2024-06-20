@@ -4,10 +4,11 @@ import './styles/Login.css'
 import { useNavigate } from 'react-router-dom'
 
 import { useGlobalContext } from '../../context/globalContext';
+import ToastMsg from './ToastMsg';
 
 function Login() {
 
-   const { doLogin } = useGlobalContext()
+   const { doLogin, doRegistration } = useGlobalContext()
 
    const[action, setAction] = useState("Sign Up");
    const[isLoggedIn, setIsLoggedIn] = useState(false)
@@ -16,26 +17,59 @@ function Login() {
    let navigate = useNavigate()
 
    const handleSubmit = async (e) => {
-      e.preventDefault();
       const form = e.target;
 
-      const email = form.email.value;
-      const password = form.password.value;
+      if(action === 'Login') {
+         
+         e.preventDefault();
+   
+         const email = form.email.value;
+         const password = form.password.value;
+   
+         if (form.checkValidity()) {
+            try {
+               const user = await doLogin(email, password);
+               navigate("/app");
+            } catch (error) {
+               setError(error.message);
+            }
+         }
+      } else {
 
-      console.log(`Form submitted with email: ${email} and password: ${password}`);
-
-      if (form.checkValidity()) {
-         try {
-            const user = await doLogin(email, password);
-            navigate("/app");
-         } catch (error) {
-            setError(error.message);
+         e.preventDefault()
+   
+         const user = {
+            name: form.name.value,
+            email: form.email.value,
+            password: form.password.value
+         }
+         
+         if (form.checkValidity()) {
+            try {
+               await doRegistration(user);
+               navigate("/")
+            } catch (error) {
+               setError(error.message);
+            }
          }
       }
    };
 
-   return (
+   const handleDemo = () => {
+      const email = "user@demo.com";
+      const password = "demo";
 
+      try {
+         const user = doLogin(email, password);
+         navigate("/app");
+      } catch (error) {
+         setError(error.message);
+      }
+      
+   }
+
+   return (
+      <>
       <form method='POST' className="login-form" onSubmit={handleSubmit}>
          <div className="title-header">
             <div className="text">{action}</div>
@@ -62,14 +96,19 @@ function Login() {
             <div className="submit-container">
                <div className={action === "Login" ? "submit gray" : "submit"} onClick={() => {setAction("Sign Up")}}>Sign Up</div>
                <div className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => {setAction("Login")}}>Login</div>
+
             </div>
             <div className="submit-btn">
                <button className="submit" type='submit'>
                   Submit
                </button>
+               <div className="demo-btn" onClick={() => {handleDemo()}}>Demo</div>
             </div>
+
          </div>
       </form>
+      {error && <ToastMsg message={error} onClose={() => setError(null)} />}
+      </>
    )
 }
 

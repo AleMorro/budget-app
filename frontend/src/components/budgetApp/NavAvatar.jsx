@@ -1,6 +1,20 @@
 import React from 'react'
 
+import { useGlobalContext } from '../../context/globalContext'
+
+import { useNavigate } from 'react-router-dom'
+
 function NavAvatar() {
+
+   const { doLogout } = useGlobalContext()
+
+   let navigate = useNavigate()
+
+   const handleLogout = () => {
+      doLogout()
+      navigate('/')
+   }
+
    return(
       <li className='nav-item dropdown pe-3'>
          <a 
@@ -62,7 +76,7 @@ function NavAvatar() {
 
             <li>
                <a className='dropdown-item d-flex align-items-center' 
-               href="websites.html"
+                  onClick={handleLogout}
                >
                   <i className='bi bi-box-arrow-right'></i>
                   <span>Sign Out</span>

@@ -14,9 +14,7 @@ function PageTitle({ page }) {
          <nav>
             <ol className="breadcrumb">
                <li className="breadcrumb-item">
-                     <a href={path}>
-                        <i className="icon">{icon}</i>
-                     </a>
+                  <i className="icon">{icon}</i> 
                </li>
                <li className="breadcrumb-item active">{title}</li>
             </ol>
