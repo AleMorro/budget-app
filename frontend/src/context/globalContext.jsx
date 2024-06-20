@@ -217,6 +217,14 @@ export const GlobalProvider = ({ children }) => {
       setLoggedUser(0)
    }
 
+   const doRegistration = async(user) => {
+      console.log("Dentro doRegistration")
+      const res = await axios.post(`${BASE_URL}addUser`, user)
+         .catch((err) => {
+            setError(err.message)
+         })
+   }
+
    return (
       <GlobalContext.Provider value={{ 
          addExpense,
@@ -234,7 +242,8 @@ export const GlobalProvider = ({ children }) => {
          doLogin,
          deleteIncome,
          deleteExpense,
-         doLogout
+         doLogout,
+         doRegistration
       }}>
          {children}
       </GlobalContext.Provider>

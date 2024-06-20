@@ -1,7 +1,7 @@
 "use strict"
 
 const db = require('./db.js');
-
+const bcrypt = require('bcrypt')
 
 // GET functions
 
@@ -47,3 +47,19 @@ exports.getUserById = function(id) {
       });
    });
 };
+
+exports.createdUser = function(user) {
+   return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO users(name, email, password) VALUES (?, ?, ?)';
+  
+      bcrypt.hash(user.password, 10).then((hash => {
+         db.run(sql, [user.name, user.email, hash], function(err) {
+            if(err) {
+               reject(err);
+            } else {
+               resolve(this.lastID);
+            }
+         });
+      }));
+   });
+}

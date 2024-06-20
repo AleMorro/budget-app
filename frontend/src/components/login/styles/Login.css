@@ -100,6 +100,20 @@
    cursor: pointer;
 }
 
+.demo-btn {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 160px;
+   height: 54px;
+   color: #fff;
+   background: #e15c04;
+   border-radius: 50px;
+   font-size: 19px;
+   font-weight: 700;
+   cursor: pointer;
+}
+
 .gray {
    background: #eaeaea;
    color: #676767;
