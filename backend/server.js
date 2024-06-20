@@ -191,8 +191,7 @@ app.post('/api/sessions', function(req, res, next) {
       });
    })(req, res, next);
 });
-/*
-// DELETE /sessions/current 
+
 // Logout
 app.delete('/api/sessions/current', function(req, res){
    req.logout(function(err) {
@@ -200,7 +199,7 @@ app.delete('/api/sessions/current', function(req, res){
    });
    res.end();
 });
-*/
+
 // Check if the server is connected
 app.listen(PORT, () => {
    console.log(`server listening at http://localhost:${PORT}`)

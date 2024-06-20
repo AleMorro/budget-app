@@ -24,7 +24,7 @@ export const GlobalProvider = ({ children }) => {
 
    const[loggedUser, setLoggedUser] = useState(() => {
       const savedUser = localStorage.getItem('loggedUser')
-      return savedUser ? JSON.parse(savedUser) : { user_id: null}
+      return savedUser ? JSON.parse(savedUser) : { user_id: 0}
    })
 
    // useEffect hook to fetch data from backend when the
@@ -212,6 +212,11 @@ export const GlobalProvider = ({ children }) => {
       }
    };
 
+   const doLogout = async() => {
+      await fetch(`${BASE_URL}sessions/current`)
+      setLoggedUser(0)
+   }
+
    return (
       <GlobalContext.Provider value={{ 
          addExpense,
@@ -228,7 +233,8 @@ export const GlobalProvider = ({ children }) => {
          loggedUser,
          doLogin,
          deleteIncome,
-         deleteExpense
+         deleteExpense,
+         doLogout
       }}>
          {children}
       </GlobalContext.Provider>
