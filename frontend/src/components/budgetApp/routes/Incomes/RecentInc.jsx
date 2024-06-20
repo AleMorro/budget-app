@@ -9,7 +9,7 @@ import { getISOWeek } from 'date-fns';
 
 function RecentInc() {
 
-   const { incomesByFiltered, loading } = useGlobalContext();
+   const { incomesByFiltered, loading, getIncomes } = useGlobalContext();
 
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('This Week')
@@ -48,7 +48,7 @@ function RecentInc() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [loading, filter])
+   }, [getIncomes])
 
    return (
       <div className='card recent'>

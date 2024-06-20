@@ -30,11 +30,12 @@ export const GlobalProvider = ({ children }) => {
    // useEffect hook to fetch data from backend when the
    // the globalContext is mounted
    useEffect(() => {
-      setLoading(false)
+      setLoading(true)
       console.log("GlobalContext useEffect:")
       console.log("LoggedUserId: ", loggedUser)
       getIncomes(loggedUser.user_id)
       getExpenses(loggedUser.user_id)
+      setLoading(false)
 
       console.log("User Logged: ", loggedUser)
    }, [loggedUser])
@@ -49,7 +50,7 @@ export const GlobalProvider = ({ children }) => {
          .catch((err) => {
             setError(err.message)
          })
-      getExpenses(expense.user_id);
+      await getExpenses(expense.user_id);
    }
 
    const deleteExpense = async(id) => {
