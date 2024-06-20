@@ -50,9 +50,13 @@ function Form() {
             >
                <option selected disabled value="">Choose...</option>
                <option>Food</option>
-               <option>Sport</option>
-               <option>Vizi</option>
-               <option>Abbigliamento</option>
+               <option>Shopping</option>
+               <option>Gifts</option>
+               <option>Entertainment</option>
+               <option>Transport</option>
+               <option>Home</option>
+               <option>Vices</option>
+               <option>Other</option>
             </select>
             <div class="invalid-feedback">
                Please select a valid state.

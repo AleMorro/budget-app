@@ -10,6 +10,7 @@ import '../../styles/Dashboard.css'
 
 import { GlobalProvider } from '../../../../context/globalContext.jsx'
 import RecentInc from "./RecentInc.jsx";
+import Footer from "../../Footer.jsx";
 
 function Incomes() {
 
@@ -33,6 +34,8 @@ function Incomes() {
                </div>
             </div>
          </section>
+
+         <Footer />
 
       </main>
    )

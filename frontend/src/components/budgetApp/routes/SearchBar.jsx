@@ -3,6 +3,18 @@ import React from 'react'
 import '../styles/SearchBar.css'
 
 function SearchBar() {
+
+   const handleInput = (event) => {
+      const value = event.target.value.toLowerCase();
+      const table = document.getElementById('myTable');
+      const rows = table.getElementsByTagName('tr');
+
+      Array.from(rows).forEach((row) => {
+         const text = row.textContent || row.innerText;
+         row.style.display = text.toLowerCase().includes(value) ? '' : 'none';
+      });
+   }
+
    return (
       <div className="search-bar">
          <form
@@ -14,11 +26,10 @@ function SearchBar() {
                type="text"
                name='query'
                placeholder='Search'
-               title='Enter search keyword' 
+               title='Enter search keyword'
+               onKeyUp={handleInput}
             />
-            <button type='submit' title='Search'>
-               <i className='bi bi-search'></i>
-            </button>
+            <i className='bi bi-search'></i>
          </form>
       </div>
    );

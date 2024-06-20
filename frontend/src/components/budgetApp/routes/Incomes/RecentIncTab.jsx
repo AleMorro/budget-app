@@ -19,12 +19,12 @@ function RecentIncTab( { items } ) {
             </tr>
          </thead>
       
-            <tbody>
+            <tbody id='myTable'>
                {items &&
                   items.length > 0 &&
                   items.map(item => (
                      <tr key={item.id}>
-                        <th scope="row" className=''>
+                        <th scope="row">
                            {item.category}
                         </th>
                         <td>{item.date}</td>

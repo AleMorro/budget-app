@@ -5,6 +5,7 @@ import PageTitle from "../PageTitle";
 import '../../styles/Main.css';
 import Dashboard from "./Dashboard";
 import { GlobalProvider } from '../../../../context/globalContext.jsx'
+import Footer from "../../Footer.jsx";
 
 function Home() {
 
@@ -12,6 +13,7 @@ function Home() {
       <main id='main' className='main'>
          <PageTitle page="Home"/>
          <Dashboard />
+         <Footer />
       </main>
    )
 }

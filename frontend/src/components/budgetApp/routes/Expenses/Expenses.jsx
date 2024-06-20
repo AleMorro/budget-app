@@ -9,6 +9,7 @@ import '../../styles/Main.css';
 import '../../styles/Dashboard.css'
 
 import RecentExp from "./RecentExp.jsx";
+import Footer from "../../Footer.jsx";
 
 function Expenses() {
 
@@ -32,6 +33,8 @@ function Expenses() {
                </div>
             </div>
          </section>
+
+         <Footer />
 
       </main>
    )

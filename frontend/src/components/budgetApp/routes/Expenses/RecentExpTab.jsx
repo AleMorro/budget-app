@@ -16,11 +16,10 @@ function RecentExpTab( { items } ) {
                <th scope="col">Description</th>
                <th scope="col">Amount</th>
                <th scope="col">Delete</th>
-
             </tr>
          </thead>
       
-            <tbody>
+            <tbody id='myTable'>
                {items &&
                   items.length > 0 &&
                   items.map(item => (
