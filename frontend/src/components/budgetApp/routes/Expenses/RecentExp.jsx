@@ -1,14 +1,10 @@
 import React, { useState, useEffect, Component } from 'react'
 import CardFilter from '../Home/CardFilter'
-
-/*
-import SearchBar from '../../SearchBar'
-import '../../styles/SearchBar.css'
-*/
+import RecentExpTab from './RecentExpTab';
 
 import { useGlobalContext } from '../../../../context/globalContext';
-import RecentExpTab from './RecentExpTab';
 import { getISOWeek, toDate } from 'date-fns';
+import SearchBar from '../SearchBar'
 
 function RecentExp() {
 
@@ -61,7 +57,7 @@ function RecentExp() {
             <h5 className="card-title">
                Recent expenses <span>/{filter}</span>
             </h5>
-            {/* Add the searchBar */}
+            <SearchBar />
             <RecentExpTab items={items}/>
          </div>
 
