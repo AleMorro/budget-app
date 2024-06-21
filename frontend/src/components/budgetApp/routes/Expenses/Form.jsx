@@ -8,7 +8,7 @@ function Form() {
 
    const [category, setCategory] = useState('');
    const [date, setDate] = useState('');
-   const [amount, setAmount] = useState(null);
+   const [amount, setAmount] = useState(0);
    const [description, setDescription] = useState('');
    const [error, setError] = useState(null);
 
@@ -30,7 +30,7 @@ function Form() {
          addExpense(expense);
          setCategory('');
          setDate('');
-         setAmount('');
+         setAmount(0);
          setDescription('');
          setError(null);
       } catch (err) {
@@ -40,15 +40,15 @@ function Form() {
 
    return (
    
-      <form class="row g-3 needs-validation" novalidate onSubmit={handleFormSubmit}>
-         <div class="col-md-4">
-            <label for="validationCustom04" class="form-label">Category</label>
+      <form className="row g-3 needs-validation" noValidate onSubmit={handleFormSubmit}>
+         <div className="col-md-4">
+            <label for="validationCustom04" className="form-label">Category</label>
             <select 
                className="form-select" id="validationCustom04" 
                value={category} onChange={(e) => setCategory(e.target.value)}
                required
             >
-               <option selected disabled value="">Choose...</option>
+               <option selected disabled defaultValue="">Choose...</option>
                <option>Food</option>
                <option>Shopping</option>
                <option>Gifts</option>
@@ -58,44 +58,35 @@ function Form() {
                <option>Vices</option>
                <option>Other</option>
             </select>
-            <div class="invalid-feedback">
-               Please select a valid state.
-            </div>
          </div>
-         <div class="col-md-4">
-            <label for="validationCustom01" class="form-label">Date</label>
+         <div className="col-md-4">
+            <label for="validationCustom01" className="form-label">Date</label>
             <input 
-               type="date" class="form-control" id="validationCustom01" 
+               type="date" className="form-control" id="validationCustom01" 
                value={date} onChange={(e) => setDate(e.target.value)} required
             />
-            <div class="valid-feedback">
-               Looks good!
-            </div>
          </div>
-         <div class="col-md-4">
-            <label for="validationCustomUsername" class="form-label">Amount</label>
-            <div class="input-group has-validation">
-               <span class="input-group-text" id="inputGroupPrepend">$</span>
+         <div className="col-md-4">
+            <label for="validationCustomUsername" className="form-label">Amount</label>
+            <div className="input-group has-validation">
+               <span className="input-group-text" id="inputGroupPrepend">$</span>
                <input 
-                  type="number" class="form-control" id="validationCustomUsername" 
+                  type="number" className="form-control" id="validationCustomUsername" 
                   aria-describedby="inputGroupPrepend" step="0.01" placeholder='00,00' 
                   min={0} value={amount} onChange={(e) => setAmount(e.target.value)} required
                />
-               <div class="invalid-feedback">
-                  Please choose an amount
-               </div>
             </div>
          </div>
-         <div class="input-group">
-            <span class="input-group-text">Description</span>
+         <div className="input-group">
+            <span className="input-group-text">Description</span>
             <textarea 
-               class="form-control" aria-label="With textarea"
+               className="form-control" aria-label="With textarea"
                value={description} onChange={(e) => setDescription(e.target.value)}
             ></textarea>
          </div>
          
-         <div class="col-12">
-            <button class="btn btn-primary" type="submit" disabled={loading}>
+         <div className="col-12">
+            <button className="btn btn-primary" type="submit" disabled={loading}>
                Submit form
             </button>
          </div>

@@ -92,13 +92,13 @@ const isLoggedIn = (req, res, next) => {
 *************/
 
 // get all incomes by id
-app.get('/api/incomes/:id', /*isLoggedIn,*/  (req, res) => {
+app.get('/api/incomes/:id', /*isLoggedIn, */  (req, res) => {
    incomeDao.getAllIncomes(req.params.id)
       .then(incomes => res.json(incomes))
       .catch(error => res.status(500).json({ error: error.message }));
 });
 // get all expenses by id
-app.get('/api/expenses/:id', /*isLoggedIn,*/  (req, res) => {
+app.get('/api/expenses/:id', /*isLoggedIn, */  (req, res) => {
    expenseDao.getAllExpenses(req.params.id)
       .then(expenses => res.json(expenses))
       .catch(error => res.status(500).json({ error: error.message}));

@@ -37,7 +37,7 @@ function RecentIncTab( { items } ) {
                         </span>
                      </td>
                      <td>
-                        <i class="bi bi-trash" id='trash-icon' onClick={ () => deleteIncome(item.id) }></i>
+                        <i className="bi bi-trash" id='trash-icon' onClick={ () => deleteIncome(item.id) }></i>
                      </td>
                   </tr>
                ))}

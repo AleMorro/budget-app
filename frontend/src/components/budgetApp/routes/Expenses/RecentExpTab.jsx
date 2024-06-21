@@ -37,7 +37,7 @@ function RecentExpTab( { items } ) {
                            </span>
                         </td>
                         <td>
-                           <i class="bi bi-trash" id='trash-icon' onClick={ () => deleteExpense(item.id) }></i>
+                           <i className="bi bi-trash" id='trash-icon' onClick={ () => deleteExpense(item.id) }></i>
                         </td>
                      </tr>
                   ))}
