@@ -5,7 +5,7 @@ import { useGlobalContext } from '../../../../context/globalContext';
 function Form() {
 
    const { addIncome, loggedUser, loading } = useGlobalContext();
-
+   // to save status of values in the form
    const [category, setCategory] = useState('');
    const [date, setDate] = useState('');
    const [amount, setAmount] = useState(null);
@@ -19,11 +19,11 @@ function Form() {
       const user_id = loggedUser.user_id
       
       const income = {
-          user_id: user_id,
-          category,
-          date,
-          amount: parseFloat(amount),
-          description
+         user_id: user_id,
+         category,
+         date,
+         amount: parseFloat(amount),
+         description
       };
 
       try {

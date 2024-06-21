@@ -1,8 +1,9 @@
 import React from 'react'
-
-import './styles/Nav.css'
-
+// import components
 import NavAvatar from './NavAvatar'
+
+// import stylesheet
+import './styles/Nav.css'
 
 function Nav() {
 

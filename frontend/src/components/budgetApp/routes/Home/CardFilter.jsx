@@ -1,5 +1,10 @@
 import React from "react"
 
+
+/**
+ * function to handle the filter change of the drop-down menu on the left
+ * of the card
+ */
 function CardFilter( {filterChange} ) {
 
    return (

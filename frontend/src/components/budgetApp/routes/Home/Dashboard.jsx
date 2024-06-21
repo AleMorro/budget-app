@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { CardsData } from '../../data/CardsData';
-
+// import components
 import Card from './Card';
-
-import '../../styles/Dashboard.css'
 import Reports from './Reports';
 import Pie from './Pie';
+// import stylesheet
+import '../../styles/Dashboard.css'
 
 function Dashboard() {
    

@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+// import components
 import CardFilter from './CardFilter'
 import ReportCharts from './ReportCharts';
 
 function Reports() {
 
    const [filter, setFilter] = useState('This Week')
+
    const handleFilterChange = filter => {
       setFilter(filter)
    };

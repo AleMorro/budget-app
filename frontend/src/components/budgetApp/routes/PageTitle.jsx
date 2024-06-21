@@ -1,6 +1,7 @@
 import React from 'react'
+// import components
 import { SidebarData } from '../data/SidebarData';
-
+// import stylesheet
 import "../styles/PageTitle.css"
 
 function PageTitle({ page }) {

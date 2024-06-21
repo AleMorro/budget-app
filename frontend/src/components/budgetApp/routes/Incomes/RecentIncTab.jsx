@@ -1,9 +1,12 @@
 import React from 'react'
 
 import { useGlobalContext } from '../../../../context/globalContext';
-
+// import stylesheet
 import '../../styles/RecentTab.css'
 
+/**
+ * Functions to map the various items in the table
+ */
 function RecentIncTab( { items } ) {
 
    const { deleteIncome } = useGlobalContext();

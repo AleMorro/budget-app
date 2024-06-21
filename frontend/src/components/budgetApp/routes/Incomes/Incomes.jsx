@@ -1,16 +1,14 @@
 import React from "react";
-
+// import components
 import PageTitle from "../PageTitle";
-
-import '../../styles/Main.css'
 import FormInc from "./FormInc";
-
+import RecentInc from "./RecentInc.jsx";
+import Footer from "../../Footer.jsx";
+// import stylesheet
 import '../../styles/Main.css';
 import '../../styles/Dashboard.css'
 
-import RecentInc from "./RecentInc.jsx";
-import Footer from "../../Footer.jsx";
-
+// function to render all the various components of incomes routes
 function Incomes() {
 
    return(

@@ -1,10 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { SidebarData } from "./data/SidebarData";
-import { IconContext } from "react-icons";
 
+import { SidebarData } from "./data/SidebarData";
+
+import { IconContext } from "react-icons";
+// import stylesheet
 import "./styles/Sidebar.css"
 
+/**
+ * Function to render the list on the sidebar
+ */
 function Sidebar() {
 
    return(

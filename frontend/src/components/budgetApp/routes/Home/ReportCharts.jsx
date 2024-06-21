@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+// import for rendering charts of the library
 import Chart from 'react-apexcharts';
 
 import { useGlobalContext } from '../../../../context/globalContext';
-import { useCallback } from 'react';
+
 import { getISOWeek } from 'date-fns';
 
+/**
+ * Function to render the graph based on the incomes and expenses filtered by the CardFilter
+ */
 function ReportCharts({ filter }) {
 
    const { incomesByFiltered, expensesByFiltered, loading } = useGlobalContext();
-
+   // to set the setting of the chart
    const[chartData, setChartData] = useState({
 
       series: [
@@ -55,6 +59,7 @@ function ReportCharts({ filter }) {
       },
    })
 
+   // to fetch the values based on the filter
    const fetchDataByFilter = useCallback(() => {
       if (loading) return;
 
@@ -96,10 +101,11 @@ function ReportCharts({ filter }) {
          expenseCategories.push(date);
       });
 
-      // Sort date for series
+      // sort date for series
       incomeCategories.sort((a, b) => a - b);
       expenseCategories.sort((a, b) => a - b);
 
+      // setting the new data
       setChartData({
          series: [
             { name: 'Incomes', data: incomeData },
@@ -115,6 +121,7 @@ function ReportCharts({ filter }) {
       });
    }, [filter, incomesByFiltered, expensesByFiltered, loading]);
 
+   // hook to refresh things on mount
    useEffect(() => {
       fetchDataByFilter();
    }, [fetchDataByFilter]);

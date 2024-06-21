@@ -4,8 +4,9 @@ import App from './App.jsx';
 
 import { GlobalProvider } from './context/globalContext.jsx'
 
-
+// entry point for application
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
    <GlobalProvider>
       <App />

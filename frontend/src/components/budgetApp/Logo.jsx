@@ -1,9 +1,9 @@
 import React from 'react'
-
+// import stylesheet
 import './styles/Logo.css'
 
 function Logo() {
-
+   // functions to handle the open and close of the sidebar
    const handleToggleSideBar = () => {
       document.body.classList.toggle('toggle-sidebar');
    }

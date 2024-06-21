@@ -1,12 +1,12 @@
 import React from "react";
-
+// import components
 import PageTitle from "../PageTitle";
-
-import '../../styles/Main.css';
 import Dashboard from "./Dashboard";
-import { GlobalProvider } from '../../../../context/globalContext.jsx'
 import Footer from "../../Footer.jsx";
+// import stylesheet
+import '../../styles/Main.css';
 
+// function to render all the various components of home routes
 function Home() {
 
    return(

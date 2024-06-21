@@ -51,6 +51,11 @@ exports.addIncome = function(income) {
 }
 
 // DELETE functions
+
+/**
+ * Post method to delete an income
+ * @param {*} id of the transactions to delete
+ */
 exports.deleteIncomeById = function(id) {
    return new Promise((resolve, reject) => {
       const sql = 'DELETE FROM incomes WHERE id = ?';
@@ -63,5 +68,3 @@ exports.deleteIncomeById = function(id) {
       })
    })
 }
-
-

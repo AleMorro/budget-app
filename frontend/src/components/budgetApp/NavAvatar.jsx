@@ -1,15 +1,17 @@
 import React from 'react'
-
+import { useNavigate } from 'react-router-dom'
+// import global context
 import { useGlobalContext } from '../../context/globalContext'
 
-import { useNavigate } from 'react-router-dom'
-
+/**
+ * Components to render the drop-down menu on the right of the header
+ */
 function NavAvatar() {
-
+   // import values from context
    const { doLogout, loggedUser } = useGlobalContext()
-
+   // initialize hook for navigate in routes
    let navigate = useNavigate()
-
+   // to handle the sign out button
    const handleLogout = () => {
       doLogout()
       navigate('/')

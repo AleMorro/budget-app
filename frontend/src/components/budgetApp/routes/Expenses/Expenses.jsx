@@ -1,16 +1,14 @@
 import React from "react";
-
+// import components
 import PageTitle from "../PageTitle";
-
-import '../../styles/Main.css'
 import FormExp from "./FormExp.jsx";
-
+import RecentExp from "./RecentExp.jsx";
+import Footer from "../../Footer.jsx";
+// import stylesheet
 import '../../styles/Main.css';
 import '../../styles/Dashboard.css'
 
-import RecentExp from "./RecentExp.jsx";
-import Footer from "../../Footer.jsx";
-
+// function to render all the various components of expenses routes
 function Expenses() {
 
    return(

@@ -19,7 +19,7 @@ const exp = require('constants');
 const { error } = require('console');
 const bcrypt = require('bcrypt')
 
-// Configurazione strategia Passport
+// strategy passport configuration
 passport.use(new LocalStrategy(
    { usernameField: 'email', passwordField: 'password' },
    function(email, password, done) {
@@ -108,7 +108,7 @@ app.get('/api/expenses/:id', /*isLoggedIn, */  (req, res) => {
  * POST
 *************/
 
-// post a income
+// post an income
 app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
    const income = {
       user_id: req.body.user_id,
@@ -123,7 +123,7 @@ app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
    .catch((err) => res.status(503).json({error: err.message}));
 });
 
-// post a expense
+// post an expense
 app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
    const expense = {
      user_id: req.body.user_id,
@@ -142,6 +142,7 @@ app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
  * DELETE
 *************/
 
+// delete an income
 app.delete('/api/deleteIncome/:id', /*isLoggedIn*/ (req, res) => {
    incomeDao.deleteIncomeById(req.params.id)
       .then(changes => {
@@ -154,6 +155,7 @@ app.delete('/api/deleteIncome/:id', /*isLoggedIn*/ (req, res) => {
       .catch(error => res.status(500).json({ error: error.message }));
 });
 
+// delete an expense
 app.delete('/api/deleteExpense/:id', /*isLoggedIn*/ (req, res) => {
    expenseDao.deleteExpenseById(req.params.id)
       .then(changes => {
@@ -170,7 +172,7 @@ app.delete('/api/deleteExpense/:id', /*isLoggedIn*/ (req, res) => {
  * SESSIONS
 *************/
 
-// Login
+// login
 app.post('/api/sessions', function(req, res, next) {
    console.log(`Received login request: ${JSON.stringify(req.body)}`); // Log dei dati ricevuti
    passport.authenticate('local', function(err, user, info) {
@@ -185,7 +187,7 @@ app.post('/api/sessions', function(req, res, next) {
    })(req, res, next);
 });
 
-// Logout
+// logout
 app.delete('/api/sessions/current', function(req, res){
    req.logout(function(err) {
       if (err) { return res.status(503).json(err); }
@@ -194,7 +196,8 @@ app.delete('/api/sessions/current', function(req, res){
 });
 
 // POST /users
-// Sign up
+
+// sign up
 app.post('/api/addUser', /* isLoggedIn, */ (req, res) => {
    
    const user = {

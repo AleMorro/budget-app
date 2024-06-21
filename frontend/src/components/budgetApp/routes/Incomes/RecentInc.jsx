@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
+// import components
 import CardFilter from '../Home/CardFilter'
 import RecentIncTab from './RecentIncTab';
-
 import SearchBar from '../SearchBar'
 
 import { useGlobalContext } from '../../../../context/globalContext';
@@ -10,7 +10,7 @@ import { getISOWeek } from 'date-fns';
 function RecentInc() {
 
    const { incomesByFiltered, loading, getIncomes } = useGlobalContext();
-
+   // to save items filtered
    const [items, setItems] = useState([])
    const [filter, setFilter] = useState('This Week')
 
@@ -21,8 +21,6 @@ function RecentInc() {
    const fetchDataByFilter = () => {
 
       console.log("fetch data for recentIncomes")
-
-      // if (loading) return;
 
       let targetValue;
       const today = new Date();
@@ -44,6 +42,7 @@ function RecentInc() {
       setItems(incomesByFiltered(filter, targetValue))
    }
 
+   // hook to refresh data on mount and when it fetch incomes from backend
    useEffect(() => {
       if(!loading) {
          fetchDataByFilter()

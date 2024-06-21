@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { useGlobalContext } from '../../../../context/globalContext';
-
+// import components
 import CardFilter from './CardFilter';
-
+// import stylesheet
 import '../../styles/Card.css'
 import { getISOWeek } from 'date-fns';
 
@@ -54,6 +54,7 @@ function Card( {card} ) {
          let balanceData = incomeData - expenseData
          let previousBalData = previousIncData - previousExpData
 
+         // calculate trend as the diference beetween current data and previous one
          let trend = 0
 
          if (card.name === 'Incomes') {
@@ -96,12 +97,12 @@ function Card( {card} ) {
       }
    }
 
-   // Hook used to fetch data and rendered the correct data on mount
+   // hook used to fetch data and rendered the correct data on mount
    useEffect(() => {
       if(!loading) {
          handleFilterChange(filter)
       }
-   }, [loading, filter, handleFilterChange])
+   }, [loading, filter])
 
    return (
       <div className="col-xxl-4 col-md-4">

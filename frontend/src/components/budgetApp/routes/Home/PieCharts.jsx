@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Chart from 'react-apexcharts'
 
 import { useGlobalContext } from '../../../../context/globalContext';
-import { useCallback, useEffect } from 'react';
+
 import { getISOWeek } from 'date-fns';
 
+/**
+ * Function to render the pie graph based on the incomes and expenses filtered by the CardFilter
+ */
 function PieCharts( { filter }) {
 
    const { totalIncomesFiltered, totalExpensesFiltered, loading } = useGlobalContext();
-
-
+   // to set the setting of the chart
    const[pieData, setPieData] = useState({
 
       options: {
@@ -32,6 +34,7 @@ function PieCharts( { filter }) {
        series: [200, 2000],
    });
 
+   // to fetch the values based on the filter
    const fetchDataByFilter = useCallback(() => {
       if (loading) return;
 
@@ -55,6 +58,7 @@ function PieCharts( { filter }) {
       const totalIncomes = totalIncomesFiltered(filter, targetValue);
       const totalExpenses = totalExpensesFiltered(filter, targetValue);
 
+      // setting the new data
       setPieData({
          series: [totalIncomes, totalExpenses],
          options: {
@@ -62,7 +66,8 @@ function PieCharts( { filter }) {
          }
       });
    }, [filter, totalIncomesFiltered, totalExpensesFiltered, loading]);
-
+   
+   // hook to refresh things on mount
    useEffect(() => {
       fetchDataByFilter();
    }, [fetchDataByFilter]);

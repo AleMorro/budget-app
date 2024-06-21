@@ -1,9 +1,10 @@
 import React from 'react'
-
+// import stylesheet
 import '../styles/SearchBar.css'
 
 function SearchBar() {
-
+   // function to handle the input on the searchbar
+   // it filter for every row in the table
    const handleInput = (event) => {
       const value = event.target.value.toLowerCase();
       const table = document.getElementById('myTable');

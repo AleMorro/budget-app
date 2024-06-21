@@ -1,27 +1,26 @@
 /**
  * Class to save and contain the various method that make
- * request to the server
+ * request to the server. General context for application
  */
 
+// import utilities
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
-//import Home from '../components/budgetApp/routes/Home/Home.jsx'
-
-const { parseISO, getDate, getMonth, getYear, getWeekYear, getISOWeek } = require('date-fns')
-
+// import date-fns methods
+const { parseISO, getMonth, getYear, getISOWeek } = require('date-fns')
+// set static URL
 const BASE_URL = "http://localhost:5000/api/";
-
+// initialize context 
 const GlobalContext = createContext();
 
-
 export const GlobalProvider = ({ children }) => {
-   
+   // to store the transactions from backend
    const[incomes, setIncomes] = useState([])
    const[expenses, setExpenses] = useState([])
-   
+   // state variables
    const[error, setError] = useState(null)
    const[loading, setLoading] = useState(true)
-
+   // to store the current logged user from backend
    const[loggedUser, setLoggedUser] = useState(() => {
       const savedUser = localStorage.getItem('loggedUser')
       return savedUser ? JSON.parse(savedUser) : { user_id: 0}
@@ -40,10 +39,11 @@ export const GlobalProvider = ({ children }) => {
       console.log("User Logged: ", loggedUser)
    }, [loggedUser])
 
-   /************ 
+   /************
     * EXPENSES
    *************/
 
+   // add expense to backend
    const addExpense = async(expense) => {
       console.log("Global context addExp: ", expense.category)
       const res = await axios.post(`${BASE_URL}addExpense`, expense)
@@ -52,7 +52,7 @@ export const GlobalProvider = ({ children }) => {
          })
       await getExpenses(expense.user_id);
    }
-
+   // delete expense from backend
    const deleteExpense = async(id) => {
       console.log("Id passed to deleteExpense: ", id)
 
@@ -62,7 +62,7 @@ export const GlobalProvider = ({ children }) => {
          })
       getExpenses(loggedUser.user_id)
    }
-
+   // get expense by id from backend
    const getExpenses = async(user_id) => {
       try {
          const res = await axios.get(`${BASE_URL}expenses/${user_id}`)
@@ -73,7 +73,7 @@ export const GlobalProvider = ({ children }) => {
          setError(err);
       } 
    }
-
+   // total of all the expenses filtered by week/month/year
    const totalExpensesFiltered = (filter, targetValue) => {
       let filterExpense = getFilteredData(expenses, filter, targetValue)
 
@@ -84,7 +84,7 @@ export const GlobalProvider = ({ children }) => {
 
       return total
    }
-
+   // object list of all the expenses filtered by week/month/year
    const expensesByFiltered = (filter, targetValue) => {
       let filterExpense =  getFilteredData(expenses, filter, targetValue);
 
@@ -93,11 +93,11 @@ export const GlobalProvider = ({ children }) => {
       return filterExpense;
    };
 
-   // to implement: deleteExpense
-
    /************ 
     * INCOMES
    *************/
+
+   // add incomes to backend
    const addIncome = async(income) => {
       const res = await axios.post(`${BASE_URL}addIncome`, income)
          .catch((err) => {
@@ -105,7 +105,7 @@ export const GlobalProvider = ({ children }) => {
          })
       getIncomes(income.user_id);
    }
-
+   // delete incomes from backend
    const deleteIncome = async(id) => {
       console.log("Id passed to deletIncome: ", id)
 
@@ -115,7 +115,7 @@ export const GlobalProvider = ({ children }) => {
          })
       getIncomes(loggedUser.user_id)
    }
-
+   // get incomes by id from backend
    const getIncomes = async(user_id) => {
       try {
          const res = await axios.get(`${BASE_URL}incomes/${user_id}`)
@@ -126,7 +126,7 @@ export const GlobalProvider = ({ children }) => {
          setError(err);
       }
    }
-
+   // total of all the incomes filtered by week/month/year
    const totalIncomesFiltered = (filter, targetValue) => {
       let filterIncomes = getFilteredData(incomes, filter, targetValue)
 
@@ -137,7 +137,7 @@ export const GlobalProvider = ({ children }) => {
 
       return total
    }
-
+   // object list of all the incomes filtered by week/month/year
    const incomesByFiltered = (filter, targetValue) => {
       //return getFilteredData(incomes, filter, targetValue);
       let filterIncomes = getFilteredData(incomes, filter, targetValue)
@@ -148,34 +148,30 @@ export const GlobalProvider = ({ children }) => {
       return filterIncomes;
    };
    
-   // to implement: deleteIncome
-
    /************ 
     * GENERAL
    *************/
+
+   // filtering functions to return a boolean if the dateString is of the correct time 
 
    const filterByWeek = (dateString, targetWeek) => {
       const date = parseISO(dateString)
       return getISOWeek(date) === targetWeek
                && getYear(date) === new Date().getFullYear()
-    
-    };
+   };
    
    const filterByMonth = (dateString, targetMonth) => {
       const date = parseISO(dateString);
       return getMonth(date) === targetMonth 
                && getYear(date) === new Date().getFullYear();
-    };
+   };
 
    const filterByYear = (dateString, targetYear) => {
       const date = parseISO(dateString);
       return getYear(date) === targetYear;
    };
    
-   /**
-    * Function to filter correct data and return the list of object of 
-    * the data needed from the frontend
-    */
+   // filter data by time period
    const getFilteredData = (data, filter, targetValue) => {
       let filteredData;
       switch (filter) {
@@ -195,7 +191,11 @@ export const GlobalProvider = ({ children }) => {
       return filteredData;
    };
 
-   // Function to perform the login and open a session with backend
+   /************ 
+    * SESSIONS
+   *************/
+
+   // to perform the login from backend
    const doLogin = async (email, password) => {
       try {
          console.log(`Attempting login with email: ${email} and password: ${password}`);
@@ -212,12 +212,12 @@ export const GlobalProvider = ({ children }) => {
          }
       }
    };
-
+   // to perform the logout from backend
    const doLogout = async() => {
       await fetch(`${BASE_URL}sessions/current`)
       setLoggedUser(0)
    }
-
+   // to add user after registration from the backend
    const doRegistration = async(user) => {
       console.log("Dentro doRegistration")
       const res = await axios.post(`${BASE_URL}addUser`, user)
@@ -226,25 +226,26 @@ export const GlobalProvider = ({ children }) => {
          })
    }
 
+   // exports all value data
    return (
       <GlobalContext.Provider value={{ 
          addExpense,
-         getExpenses,
-         addIncome,
-         getIncomes,
-         error,
-         setError,
-         loading,
-         expensesByFiltered,
-         incomesByFiltered, 
-         totalExpensesFiltered,
-         totalIncomesFiltered,
-         loggedUser,
-         doLogin,
-         deleteIncome,
          deleteExpense,
+         getExpenses,
+         totalExpensesFiltered,
+         expensesByFiltered,
+         addIncome,
+         deleteIncome,
+         getIncomes,
+         totalIncomesFiltered,
+         incomesByFiltered, 
+         doLogin,
          doLogout,
-         doRegistration
+         doRegistration,
+         setError,
+         error,
+         loading,
+         loggedUser
       }}>
          {children}
       </GlobalContext.Provider>

@@ -1,3 +1,4 @@
+// import react utilities
 import React from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import Icons
@@ -15,31 +16,30 @@ import Incomes from "./components/budgetApp/routes/Incomes/Incomes";
 import Budget from "./components/budgetApp/routes/Budget/Budget";
 import Cashflow from "./components/budgetApp/routes/Wallets/Wallets";
 
-import { GlobalProvider } from './context/globalContext.jsx'
-
 // import stylesheet
 import "./App.css"
 
 function App() {
 
-  return (
-    <BrowserRouter>
+   // setting the various router for the application
+   return (
+      <BrowserRouter>
 
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/app/*" element={<AppLayout />} />
-      </Routes>
-      
-      <Routes>
-         <Route path='/app' element = {<Home />}/>
-         <Route path='/app/expenses' element = {<Expenses />}/>
-         <Route path='/app/incomes' element = {<Incomes />}/>
-         <Route path='/app/budget' element = {<Budget />}/>
-         <Route path='/app/cashflow' element = {<Cashflow />}/>
-      </Routes>
-      
-    </BrowserRouter>
-  );
+         <Routes>
+         <Route path="/" element={<Login />} />
+         <Route path="/app/*" element={<AppLayout />} />
+         </Routes>
+         
+         <Routes>
+            <Route path='/app' element = {<Home />}/>
+            <Route path='/app/expenses' element = {<Expenses />}/>
+            <Route path='/app/incomes' element = {<Incomes />}/>
+            <Route path='/app/budget' element = {<Budget />}/>
+            <Route path='/app/cashflow' element = {<Cashflow />}/>
+         </Routes>
+         
+      </BrowserRouter>
+   );
 }
 
 export default App;

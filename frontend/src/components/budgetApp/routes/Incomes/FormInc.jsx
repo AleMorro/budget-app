@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+// import components
 import Form from './Form.jsx'
 
+// function to render the inside of the Cards
 function FormInc() {
 
    return (
