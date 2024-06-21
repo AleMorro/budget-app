@@ -21,28 +21,28 @@ function RecentIncTab( { items } ) {
             </tr>
          </thead>
       
-            <tbody id='myTable'>
-               {items &&
-                  items.length > 0 &&
-                  items.map(item => (
-                     <tr key={item.id}>
-                        <th scope="row">
-                           {item.category}
-                        </th>
-                        <td>{item.date}</td>
-                        <td>{item.description}</td>
-                        <td>
-                           <span className='badge bg-success'>
-                              €{item.amount.toFixed(2)}
-                           </span>
-                        </td>
-                        <td>
-                           <i class="bi bi-trash" onClick={ () => deleteIncome(item.id) }></i>
-                        </td>
-                     </tr>
-                  ))}
-            </tbody>
-         </table>
+         <tbody id='myTable'>
+            {items &&
+               items.length > 0 &&
+               items.map(item => (
+                  <tr key={item.id}>
+                     <th scope="row">
+                        {item.category}
+                     </th>
+                     <td>{item.date}</td>
+                     <td>{item.description}</td>
+                     <td>
+                        <span className='badge bg-success'>
+                           €{item.amount.toFixed(2)}
+                        </span>
+                     </td>
+                     <td>
+                        <i class="bi bi-trash" id='trash-icon' onClick={ () => deleteIncome(item.id) }></i>
+                     </td>
+                  </tr>
+               ))}
+         </tbody>
+      </table>
    );
 }
 export default RecentIncTab;

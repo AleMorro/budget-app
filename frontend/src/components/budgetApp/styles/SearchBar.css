@@ -3,12 +3,15 @@
    max-width: 400px;
    padding: 0px 20px 15px;
    margin: auto;
-   position: inherit;
+   position: absolute;
+   left: 35%;
+   top: 15px;
+
 }
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
    .search-bar {
-      position: inherit;
+      position: absolute;
       top: 0px;
       right: 43%;
       padding: 20px;

@@ -1,6 +1,11 @@
-i {
+#trash-icon {
    align-items: center;
    padding-left: 15px;
    padding-right: 15px;
    cursor: pointer;
+   color: #012970;
+}
+
+#trash-icon:hover {
+   color: #ec2020;
 }

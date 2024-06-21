@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 function NavAvatar() {
 
-   const { doLogout } = useGlobalContext()
+   const { doLogout, loggedUser } = useGlobalContext()
 
    let navigate = useNavigate()
 
@@ -28,7 +28,7 @@ function NavAvatar() {
 
          <ul className='dropdown-menu dropdown-menu-end dropdown-menu-arrow profile'>
             <li className='dropdown-header'>
-               <h6>David</h6>
+               <h6>{loggedUser.name}</h6>
                <span>Web developer</span>
             </li>
             <li>

@@ -48,7 +48,7 @@ function RecentInc() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [getIncomes])
+   }, [getIncomes, filter])
 
    return (
       <div className='card recent'>
@@ -57,8 +57,8 @@ function RecentInc() {
          <div className="card-body">
             <h5 className="card-title">
                Recent incomes <span>/{filter}</span>
+               <SearchBar />
             </h5>
-            <SearchBar />
             <RecentIncTab items={items}/>
          </div>
 

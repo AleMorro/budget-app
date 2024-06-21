@@ -8,7 +8,6 @@ import FormInc from "./FormInc";
 import '../../styles/Main.css';
 import '../../styles/Dashboard.css'
 
-import { GlobalProvider } from '../../../../context/globalContext.jsx'
 import RecentInc from "./RecentInc.jsx";
 import Footer from "../../Footer.jsx";
 

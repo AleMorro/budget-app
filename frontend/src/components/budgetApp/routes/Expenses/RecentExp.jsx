@@ -47,7 +47,7 @@ function RecentExp() {
       if(!loading) {
          fetchDataByFilter()
       }
-   }, [getExpenses])
+   }, [getExpenses, filter])
 
    return (
       <div className='card recent'>
@@ -56,8 +56,8 @@ function RecentExp() {
          <div className="card-body">
             <h5 className="card-title">
                Recent expenses <span>/{filter}</span>
+               <SearchBar />
             </h5>
-            <SearchBar />
             <RecentExpTab items={items}/>
          </div>
 
