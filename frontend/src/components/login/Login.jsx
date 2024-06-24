@@ -49,7 +49,7 @@ function Login() {
             try {
                await doRegistration(user);
                navigate("/")
-               //setIsRegistered("You're successfully registered!")
+               setIsRegistered("You're already registered!")
             } catch (error) {
                setError(error.message);
             }
