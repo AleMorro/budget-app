@@ -1,5 +1,5 @@
 # budget-app
-React simple web application to manage expenses and income and see their trends.
+React simple single page web application to manage expenses and income and see their trends.
 ## Introduction
 Web site developed according to client-server logic. The project is divided into backend and frontend parts.
 ## Description
