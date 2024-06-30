@@ -23,7 +23,7 @@ The technology stack used depends directly on the classic division in which web 
    * CSS
    * React
    * Bootstrap
-   * Apache Echarts: used for dynamic representation of various graphs
+   * ApexChartd: React charts wrapper
    * Axios: promise-based HTTP Client for node.js. Used to handle calls to the server by the client
    * date-fns: modern JavaScript date utility library
 ## Image of main application
