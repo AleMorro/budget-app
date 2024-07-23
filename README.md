@@ -28,7 +28,13 @@ The technology stack used depends directly on the classic division in which web 
    * date-fns: modern JavaScript date utility library
 ## Image of main application
 Here an image to show an example of how the main view of the application is (Home.jsx component)
-![screen](/assets/budget-app_screenshot.png)
+![screen](/assets/Home.png)
+
+Here another one to show an example of Expenses sections:
+![screen](/assets/Expenses.png)
+## Guide to use it
+Clone the repository. Open the project in VS Code and open two terminals: one in the backend folder (command "nodemon server.js") and one in the frontend folder (command "npm start").
+
 ## Contributing
 Contribution to budget-app is welcome! If you have an idea for a new feature or bug fix, please open an issue or a pull request.
 
