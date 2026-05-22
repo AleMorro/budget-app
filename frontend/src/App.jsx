@@ -15,6 +15,9 @@ import Expenses from "./components/budgetApp/routes/Expenses/Expenses";
 import Incomes from "./components/budgetApp/routes/Incomes/Incomes";
 import Budget from "./components/budgetApp/routes/Budget/Budget";
 import Cashflow from "./components/budgetApp/routes/Wallets/Wallets";
+import PreviousYears from "./components/budgetApp/routes/PreviousYears/PreviousYears";
+import CategorySettings from "./components/budgetApp/routes/CategorySettings/CategorySettings";
+import StockWatch from "./components/budgetApp/routes/StockWatch/StockWatch";
 
 // import stylesheet
 import "./App.css"
@@ -34,8 +37,11 @@ function App() {
             <Route path='/app' element = {<Home />}/>
             <Route path='/app/expenses' element = {<Expenses />}/>
             <Route path='/app/incomes' element = {<Incomes />}/>
+            <Route path='/app/category-settings' element = {<CategorySettings />}/>
             <Route path='/app/budget' element = {<Budget />}/>
             <Route path='/app/cashflow' element = {<Cashflow />}/>
+            <Route path='/app/previous-years' element = {<PreviousYears />}/>
+            <Route path='/app/stocks' element = {<StockWatch />}/>
          </Routes>
          
       </BrowserRouter>

@@ -8,7 +8,8 @@ function PageTitle({ page }) {
 
    // filter SideBarData based on the page title
    const filteredData = SidebarData.filter(item => item.title === page);
-   const { title, icon, path } = filteredData[0];
+   const fallbackItem = { title: page, icon: null };
+   const { title, icon } = filteredData[0] || fallbackItem;
 
    return (
       <div className="pagetitle">

@@ -24,6 +24,12 @@ export const SidebarData = [
     cName: "nav-item",
   },
   {
+    title: "Category Settings",
+    path: "/app/category-settings",
+    icon: <AiIcons.AiOutlineSetting />,
+    cName: "nav-item",
+  },
+  {
     title: "Budget",
     path: "/app/budget",
     icon: <TbIcons.TbMoneybag />,
@@ -33,6 +39,18 @@ export const SidebarData = [
     title: "Wallets",
     path: "/app/cashflow",
     icon: <TbIcons.TbZoomMoney />,
+    cName: "nav-item",
+  },
+  {
+    title: "Previous Years",
+    path: "/app/previous-years",
+    icon: <AiIcons.AiOutlineLineChart />,
+    cName: "nav-item",
+  },
+  {
+    title: "Portafoglio",
+    path: "/app/stocks",
+    icon: <TbIcons.TbChartLine />,
     cName: "nav-item",
   },
 ];

@@ -1,27 +1,23 @@
-import React, { useState } from 'react'
-// import components
-import CardFilter from './CardFilter'
-import ReportCharts from './ReportCharts';
+import React from "react";
+import ReportCharts from "./ReportCharts";
+import { MONTH_LABELS } from "../../YearMonthFilter";
 
-function Reports() {
-
-   const [filter, setFilter] = useState('This Week')
-
-   const handleFilterChange = filter => {
-      setFilter(filter)
-   };
+function Reports({ year, monthIndex, loading }) {
+   const periodLabel =
+      monthIndex < 0
+         ? `${year} (tutto l'anno)`
+         : `${year} / ${MONTH_LABELS[monthIndex]}`;
 
    return (
       <div className="card overflow-auto">
-         <CardFilter filterChange={handleFilterChange} />
          <div className="card-body">
             <h5 className="card-title">
-               Reports <span>/{filter}</span>
+               Reports <span>| {periodLabel}</span>
             </h5>
-            <ReportCharts filter={filter}/>
+            <ReportCharts year={year} monthIndex={monthIndex} loading={loading} />
          </div>
       </div>
-   )
+   );
 }
 
-export default Reports
+export default Reports;

@@ -1,144 +1,119 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from "react";
 
-import { useGlobalContext } from '../../../../context/globalContext';
-// import components
-import CardFilter from './CardFilter';
-// import stylesheet
-import '../../styles/Card.css'
-import { getISOWeek } from 'date-fns';
+import { useGlobalContext } from "../../../../context/globalContext";
+import "../../styles/Card.css";
+import {
+   filterByYearMonth,
+   getPreviousYearMonthPeriod,
+   sumTransactionAmounts,
+} from "../../utils/filterByYearMonth";
 
-function Card( {card} ) {
+function trendRatio(current, previous) {
+   if (previous === 0 && current === 0) return 0;
+   if (previous === 0) return current > 0 ? 1 : 0;
+   return current / previous - 1;
+}
 
-   const { loading, totalIncomesFiltered, totalExpensesFiltered } = useGlobalContext()
-   
-   const [filter, setFilter] = useState("This Week");
-   const [renderedData, setRenderedData] = useState(null);
-   const [renderedTrend, setRenderedTrend] = useState(0)
+function formatTrendPercent(ratio) {
+   if (ratio === Infinity || ratio === -Infinity) return ratio > 0 ? 100 : -100;
+   if (Number.isNaN(ratio)) return 0;
+   return Math.round(ratio * 100);
+}
 
-   /**
-    * Function to handle the fetch of data by the filter
-    * @param {*} filter 
-    */
-   const handleFilterChange = useCallback((filter)  => {
+function Card({ card, year, monthIndex, periodLabel, loading }) {
+   const { incomes, expenses } = useGlobalContext();
 
-      try {
-         setFilter(filter);
-         let incomeData
-         let expenseData
-         let previousIncData
-         let previousExpData
+   const [renderedData, setRenderedData] = useState("—");
+   const [trendPercent, setTrendPercent] = useState(0);
 
-         let targetValue
-         const today = new Date();
+   const prevPeriod = useMemo(
+      () => getPreviousYearMonthPeriod(year, monthIndex),
+      [year, monthIndex]
+   );
 
-         switch (filter) {
-            case 'This Week':
-               targetValue = getISOWeek(today)
-               break;
-            case 'This Month':
-               targetValue = today.getMonth();
-               break;
-            case 'This Year':
-               targetValue = today.getFullYear();
-               break;
-            default:
-               targetValue = today.getDate();
-         }
-
-         incomeData = totalIncomesFiltered(filter, targetValue)
-         previousIncData = totalIncomesFiltered(filter, targetValue - 1)
-
-         expenseData = totalExpensesFiltered(filter, targetValue)
-         previousExpData = totalExpensesFiltered(filter, targetValue - 1)
-
-         let balanceData = incomeData - expenseData
-         let previousBalData = previousIncData - previousExpData
-
-         // calculate trend as the diference beetween current data and previous one
-         let trend = 0
-
-         if (card.name === 'Incomes') {
-            setRenderedData(incomeData.toLocaleString('en-US'))
-            trend = (incomeData / previousIncData) - 1
-         } else if(card.name === 'Expenses') {
-            setRenderedData(expenseData.toLocaleString('en-US'))
-            trend = (expenseData / previousExpData) - 1
-         } else {
-            setRenderedData(balanceData.toLocaleString('en-US'))
-            trend = (balanceData / previousBalData) - 1
-         }
-
-         if(trend === Infinity) setRenderedTrend(1)
-         else if(trend === -Infinity) setRenderedTrend(-1)
-         else if(isNaN(trend)) setRenderedTrend(0)
-         else setRenderedTrend(trend.toPrecision(2))
-
-      } catch(err) {
-         console.error("Error fetching data: ", err)
-      }
-   }, [totalExpensesFiltered, totalIncomesFiltered]);
-
-   // Function to render the correct label for trend
-   const renderText = () => {
-      if(card.name === 'Expenses') {
-         return renderedTrend > 0 ? 'increase' : 'decrease'
-      }
-      else {
-         return renderedTrend > 0 ? 'increase' : 'decrease' 
-      }
-   }
-   // Function ro render the correct color for the trend
-   const renderColor = () => {
-      if(card.name === 'Expenses') {
-         return renderedTrend > 0 ? 'text-danger': 'text-success'
-      }
-      else {
-         return renderedTrend > 0 ? 'text-success' : 'text-danger' 
-      }
-   }
-
-   // hook used to fetch data and rendered the correct data on mount
    useEffect(() => {
-      if(!loading) {
-         handleFilterChange(filter)
+      if (loading) return;
+
+      const curInc = sumTransactionAmounts(filterByYearMonth(incomes, year, monthIndex));
+      const curExp = sumTransactionAmounts(filterByYearMonth(expenses, year, monthIndex));
+      const prevInc = sumTransactionAmounts(
+         filterByYearMonth(incomes, prevPeriod.year, prevPeriod.monthIndex)
+      );
+      const prevExp = sumTransactionAmounts(
+         filterByYearMonth(expenses, prevPeriod.year, prevPeriod.monthIndex)
+      );
+
+      const balance = curInc - curExp;
+      const prevBalance = prevInc - prevExp;
+
+      let value;
+      let ratio;
+      if (card.name === "Incomes") {
+         value = curInc;
+         ratio = trendRatio(curInc, prevInc);
+      } else if (card.name === "Expenses") {
+         value = curExp;
+         ratio = trendRatio(curExp, prevExp);
+      } else {
+         value = balance;
+         ratio = trendRatio(balance, prevBalance);
       }
-   }, [loading, filter])
+
+      setRenderedData(
+         value.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      );
+      setTrendPercent(formatTrendPercent(ratio));
+   }, [
+      loading,
+      card.name,
+      incomes,
+      expenses,
+      year,
+      monthIndex,
+      prevPeriod.year,
+      prevPeriod.monthIndex,
+   ]);
+
+   const renderText = () => (trendPercent > 0 ? "increase" : trendPercent < 0 ? "decrease" : "stable");
+
+   const renderColor = () => {
+      if (card.name === "Expenses") {
+         if (trendPercent === 0) return "text-muted";
+         return trendPercent > 0 ? "text-danger" : "text-success";
+      }
+      if (trendPercent === 0) return "text-muted";
+      return trendPercent > 0 ? "text-success" : "text-danger";
+   };
 
    return (
       <div className="col-xxl-4 col-md-4">
-      <div className="card info-card sales-card">
-         <CardFilter filterChange= {handleFilterChange} />
-         <div className="card-body">
-            <h5 className="card-title">
-               {card.name} <span> | {filter}</span>
-            </h5>
-         
-         <div className="d-flex align items-center">
-            <div className="card-icon rounded-circle d-flex align-items-center justify-content-center">
-               <i className={card.icon}></i>
-            </div>
-         <div className="ps-3">
-            <h6>
-               {'€ ' + renderedData} 
-            </h6> 
-            
-            <span
-               className={`${renderColor()} small pt-1 fw-bold`}
-            >
-               {renderedTrend > 0
-                  ? Math.round(renderedTrend * 100)
-                  : Math.round(renderedTrend * 100)}
-               %
-            </span>
-            <span className="text-muted small pt-2 ps-1">
-               {renderText()}
-            </span>
-           </div>
-         </div>
-       </div>
-      </div>
-      </div>
-   )
-};
+         <div className="card info-card sales-card">
+            <div className="card-body">
+               <h5 className="card-title">
+                  {card.name} <span>| {periodLabel}</span>
+               </h5>
 
-export default Card
+               <div className="d-flex align-items-center">
+                  <div className="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                     <i className={card.icon}></i>
+                  </div>
+                  <div className="ps-3">
+                     <h6>€ {renderedData}</h6>
+
+                     <span className={`${renderColor()} small pt-1 fw-bold`}>
+                        {trendPercent > 0 ? "+" : ""}
+                        {trendPercent}%
+                     </span>
+                     <span className="text-muted small pt-2 ps-1">{renderText()}</span>
+                     <span className="text-muted small d-block mt-1">
+                        vs periodo precedente
+                     </span>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   );
+}
+
+export default Card;

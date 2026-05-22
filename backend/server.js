@@ -18,6 +18,7 @@ const db = require('./db/db');
 const exp = require('constants');
 const { error } = require('console');
 const bcrypt = require('bcrypt')
+const { getStockQuote, getStockQuotesBatch } = require('./services/stockQuoteService');
 
 // strategy passport configuration
 passport.use(new LocalStrategy(
@@ -103,6 +104,31 @@ app.get('/api/expenses/:id', /*isLoggedIn, */  (req, res) => {
       .then(expenses => res.json(expenses))
       .catch(error => res.status(500).json({ error: error.message}));
 })
+
+// batch quotes for portfolio
+app.post('/api/stocks/quotes', async (req, res) => {
+   try {
+      const symbols = req.body?.symbols || [];
+      const data = await getStockQuotesBatch(symbols);
+      res.json(data);
+   } catch (err) {
+      const status = err.status || 500;
+      res.status(status).json({ error: err.message || 'Errore recupero titoli' });
+   }
+});
+
+// quote + intraday chart (Yahoo Finance proxy)
+app.get('/api/stocks/:symbol', async (req, res) => {
+   try {
+      const interval = req.query.interval || '1m';
+      const range = req.query.range || '1d';
+      const data = await getStockQuote(req.params.symbol, { interval, range });
+      res.json(data);
+   } catch (err) {
+      const status = err.status || 500;
+      res.status(status).json({ error: err.message || 'Errore recupero titolo' });
+   }
+});
 
 /************ 
  * POST
