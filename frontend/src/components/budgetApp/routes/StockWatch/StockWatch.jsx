@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../../../lib/api";
 import PageTitle from "../PageTitle";
 import Footer from "../../Footer";
 import StockWatchChart from "./StockWatchChart";
@@ -16,10 +16,14 @@ import {
    removePortfolioLot,
    getUniqueSymbolsFromLots,
 } from "../../../../lib/portfolioStore";
+import {
+   CHART_PERIODS,
+   oldestPurchaseDateForSymbol,
+   buildChartQueryParams,
+} from "../../../../lib/stockChartPeriods";
 import "../../styles/Main.css";
 import "../../styles/Dashboard.css";
 
-const BASE_URL = "http://localhost:5000/api/";
 const REFRESH_MS = 5 * 60 * 1000;
 
 function StockWatch() {
@@ -27,6 +31,9 @@ function StockWatch() {
    const [lots, setLots] = useState(() => loadPortfolioLots());
    const [quotesBySymbol, setQuotesBySymbol] = useState({});
    const [quote, setQuote] = useState(null);
+   const [chartQuote, setChartQuote] = useState(null);
+   const [chartPeriod, setChartPeriod] = useState("1d");
+   const [chartLoading, setChartLoading] = useState(false);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
    const [lastFetch, setLastFetch] = useState(null);
@@ -49,7 +56,7 @@ function StockWatch() {
       if (!silent) setLoading(true);
       setError(null);
       try {
-         const res = await axios.post(`${BASE_URL}stocks/quotes`, {
+         const res = await api.post("stocks/quotes", {
             symbols: symbolsToFetch,
          });
          setQuotesBySymbol(res.data.quotes || {});
@@ -69,23 +76,55 @@ function StockWatch() {
       fetchBatchQuotes(tick > 0);
    }, [fetchBatchQuotes, tick]);
 
+   const oldestPurchase = useMemo(
+      () => (active ? oldestPurchaseDateForSymbol(lots, active) : null),
+      [lots, active]
+   );
+
+   const fetchChart = useCallback(
+      async (symbol, period) => {
+         if (!symbol) return;
+         setChartLoading(true);
+         const params = buildChartQueryParams(period, oldestPurchaseDateForSymbol(lots, symbol));
+         try {
+            const res = await api.get(`stocks/${encodeURIComponent(symbol)}`, {
+               params,
+            });
+            setChartQuote(res.data);
+            setQuote((prev) => ({
+               ...(quotesBySymbol[symbol] || prev || {}),
+               ...res.data,
+            }));
+            setQuotesBySymbol((prev) => ({
+               ...prev,
+               [symbol]: { ...(prev[symbol] || {}), ...res.data },
+            }));
+         } catch {
+            setChartQuote(null);
+         } finally {
+            setChartLoading(false);
+         }
+      },
+      [lots]
+   );
+
    useEffect(() => {
       if (!active) {
          setQuote(null);
+         setChartQuote(null);
          return;
       }
       if (quotesBySymbol[active]) {
          setQuote(quotesBySymbol[active]);
-         return;
       }
-      axios
-         .get(`${BASE_URL}stocks/${encodeURIComponent(active)}`)
-         .then((res) => {
-            setQuote(res.data);
-            setQuotesBySymbol((prev) => ({ ...prev, [active]: res.data }));
-         })
-         .catch(() => setQuote(null));
-   }, [active, quotesBySymbol]);
+      setChartPeriod("1d");
+      fetchChart(active, "1d");
+   }, [active, fetchChart]);
+
+   const handleChartPeriod = (key) => {
+      setChartPeriod(key);
+      if (active) fetchChart(active, key);
+   };
 
    useEffect(() => {
       if (!symbolsToFetch.length) return undefined;
@@ -106,6 +145,7 @@ function StockWatch() {
 
    const handleSelectSymbol = (sym) => {
       const upper = String(sym).toUpperCase();
+      setChartPeriod("1d");
       let wl = watchlist;
       if (!wl.symbols.includes(upper)) {
          wl = addSymbolToWatchlist(upper);
@@ -135,7 +175,8 @@ function StockWatch() {
       return { avgPrice: avg, quantity: grouped.quantity, plPercent: plPct, currency: q?.currency };
    }, [active, lots, quotesBySymbol]);
 
-   const changeUp = quote?.change != null && quote.change >= 0;
+   const displayQuote = chartQuote || quote;
+   const changeUp = displayQuote?.change != null && displayQuote.change >= 0;
    const holdingPlUp = activePosition?.plPercent != null && activePosition.plPercent >= 0;
 
    return (
@@ -199,11 +240,11 @@ function StockWatch() {
                               <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
                                  <div>
                                     <h5 className="card-title mb-1">
-                                       {quote?.shortName || active}
+                                       {displayQuote?.shortName || active}
                                        <span className="text-muted fs-6 ms-2">{active}</span>
                                     </h5>
-                                    {quote?.exchange && (
-                                       <p className="text-muted small mb-0">{quote.exchange}</p>
+                                    {displayQuote?.exchange && (
+                                       <p className="text-muted small mb-0">{displayQuote.exchange}</p>
                                     )}
                                     {activePosition && (
                                        <p className="small mb-0 mt-1">
@@ -228,35 +269,61 @@ function StockWatch() {
                                     )}
                                  </div>
                                  <div className="text-end">
-                                    {quote?.price != null && (
+                                    {displayQuote?.price != null && (
                                        <div className="fs-4 fw-semibold">
-                                          {quote.price.toLocaleString("it-IT", {
+                                          {displayQuote.price.toLocaleString("it-IT", {
                                              minimumFractionDigits: 2,
                                              maximumFractionDigits: 4,
                                           })}{" "}
                                           <span className="fs-6 text-muted">
-                                             {quote.currency}
+                                             {displayQuote.currency}
                                           </span>
                                        </div>
                                     )}
-                                    {quote?.change != null && (
+                                    {displayQuote?.change != null && (
                                        <span
                                           className={`badge ${
                                              changeUp ? "bg-success" : "bg-danger"
                                           }`}
                                        >
                                           giorn. {changeUp ? "+" : ""}
-                                          {quote.changePercent?.toFixed(2)}%
+                                          {displayQuote.changePercent?.toFixed(2)}%
                                        </span>
                                     )}
                                  </div>
                               </div>
 
+                              <div className="btn-group btn-group-sm flex-wrap mb-3" role="group">
+                                 {Object.entries(CHART_PERIODS).map(([key, p]) => (
+                                    <button
+                                       key={key}
+                                       type="button"
+                                       className={`btn ${
+                                          chartPeriod === key
+                                             ? "btn-primary"
+                                             : "btn-outline-primary"
+                                       }`}
+                                       onClick={() => handleChartPeriod(key)}
+                                       disabled={
+                                          key === "fromPurchase" && !oldestPurchase
+                                       }
+                                       title={
+                                          key === "fromPurchase" && !oldestPurchase
+                                             ? "Registra un acquisto per questo titolo"
+                                             : ""
+                                       }
+                                    >
+                                       {p.label}
+                                    </button>
+                                 ))}
+                              </div>
+
                               <StockWatchChart
                                  symbol={active}
-                                 currency={quote?.currency}
-                                 points={quote?.chart?.points}
-                                 loading={loading}
+                                 currency={displayQuote?.currency}
+                                 points={chartQuote?.chart?.points}
+                                 loading={chartLoading}
+                                 isIntraday={chartPeriod === "1d"}
                               />
                            </>
                         )}

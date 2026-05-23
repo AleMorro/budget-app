@@ -1,92 +1,85 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-// import global context
-import { useGlobalContext } from '../../context/globalContext'
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../context/globalContext";
 
-/**
- * Components to render the drop-down menu on the right of the header
- */
 function NavAvatar() {
-   // import values from context
-   const { doLogout, loggedUser } = useGlobalContext()
-   // initialize hook for navigate in routes
-   let navigate = useNavigate()
-   // to handle the sign out button
-   const handleLogout = () => {
-      doLogout()
-      navigate('/')
-   }
+   const { doLogout, displayName, userProfile } = useGlobalContext();
+   const navigate = useNavigate();
 
-   return(
-      <li className='nav-item dropdown pe-3'>
-         <a 
-            className='nav-link nav-profile d-flex align-items-center pe-0'
-            href='#'
+   const handleLogout = () => {
+      doLogout();
+      navigate("/");
+   };
+
+   return (
+      <li className="nav-item dropdown pe-3">
+         <a
+            className="nav-link nav-profile d-flex align-items-center pe-0"
+            href="#"
             data-bs-toggle="dropdown"
+            onClick={(e) => e.preventDefault()}
          >
-            <i className="bi bi-person-square" id='icon-profile'></i>
-            <span className='badge bg-success badge-number'></span>
+            {userProfile.avatarDataUrl ? (
+               <img
+                  src={userProfile.avatarDataUrl}
+                  alt=""
+                  className="rounded-circle nav-profile-img"
+                  width={36}
+                  height={36}
+               />
+            ) : (
+               <i className="bi bi-person-circle" id="icon-profile" aria-hidden />
+            )}
          </a>
 
-         <ul className='dropdown-menu dropdown-menu-end dropdown-menu-arrow profile'>
-            <li className='dropdown-header'>
-               <h6>{loggedUser.name}</h6>
-               <span>Web developer</span>
+         <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li className="dropdown-header">
+               <h6>{displayName}</h6>
+               <span>Account personale</span>
             </li>
             <li>
-               <hr className='dropdown-divider' />
+               <hr className="dropdown-divider" />
             </li>
-
             <li>
-               <a 
-                  className='dropdown-item d-flex align-items-center'
-                  href="users-profile.html"
-               >
-                  <i className='bi bi-person'></i>
+               <Link className="dropdown-item d-flex align-items-center" to="/app/profile">
+                  <i className="bi bi-person" />
                   <span>My Profile</span>
-               </a>
+               </Link>
             </li>
             <li>
-               <hr className='dropdown-divider'/>
+               <hr className="dropdown-divider" />
             </li>
-
             <li>
-               <a 
-                  className='dropdown-item d-flex align-items-center'
-                  href="users-profile.html"
-               >
-                  <i className='bi bi-gear'></i>
+               <Link className="dropdown-item d-flex align-items-center" to="/app/settings#settings-account">
+                  <i className="bi bi-gear" />
                   <span>Account</span>
-               </a>
+               </Link>
             </li>
             <li>
-               <hr className='dropdown-divider'/>
+               <hr className="dropdown-divider" />
             </li>
-
             <li>
-               <a 
-                  className='dropdown-item d-flex align-items-center'
-                  href="pages-faq.html"
-               >
-                  <i className='bi bi-question-circle'></i>
+               <Link className="dropdown-item d-flex align-items-center" to="/app/help">
+                  <i className="bi bi-question-circle" />
                   <span>Need Help?</span>
-               </a>
+               </Link>
             </li>
             <li>
-               <hr className='dropdown-divider'/>
+               <hr className="dropdown-divider" />
             </li>
-
             <li>
-               <a className='dropdown-item d-flex align-items-center' 
+               <button
+                  type="button"
+                  className="dropdown-item d-flex align-items-center border-0 bg-transparent w-100"
                   onClick={handleLogout}
                >
-                  <i className='bi bi-box-arrow-right'></i>
+                  <i className="bi bi-box-arrow-right" />
                   <span>Sign Out</span>
-               </a>
+               </button>
             </li>
          </ul>
       </li>
-   )
+   );
 }
 
-export default NavAvatar
+export default NavAvatar;

@@ -56,10 +56,10 @@ exports.addIncome = function(income) {
  * Post method to delete an income
  * @param {*} id of the transactions to delete
  */
-exports.deleteIncomeById = function(id) {
+exports.deleteIncomeByIdForUser = function(id, userId) {
    return new Promise((resolve, reject) => {
-      const sql = 'DELETE FROM incomes WHERE id = ?';
-      db.run(sql, [id], (err) => {
+      const sql = 'DELETE FROM incomes WHERE id = ? AND user_id = ?';
+      db.run(sql, [id, userId], (err) => {
          if(err) {
             reject(err)
             return

@@ -6,3 +6,8 @@ script_sqlite3/
 Planning/
 
 continue/
+
+# Environment (secrets)
+.env
+backend/.env
+frontend/.env

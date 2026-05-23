@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import Chart from "react-apexcharts";
 
-function StockWatchChart({ points, symbol, currency = "EUR", loading }) {
+function StockWatchChart({ points, symbol, currency = "EUR", loading, isIntraday = true }) {
    const series = useMemo(
       () => [{ name: symbol || "Prezzo", data: points || [] }],
       [points, symbol]
@@ -32,7 +32,7 @@ function StockWatchChart({ points, symbol, currency = "EUR", loading }) {
             },
          },
          tooltip: {
-            x: { format: "dd/MM HH:mm" },
+            x: { format: isIntraday ? "dd/MM HH:mm" : "dd/MM/yyyy" },
             y: {
                formatter: (v) =>
                   `${currency} ${Number(v).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`,
@@ -40,7 +40,7 @@ function StockWatchChart({ points, symbol, currency = "EUR", loading }) {
          },
          grid: { borderColor: "#e9ecef" },
       }),
-      [currency]
+      [currency, isIntraday]
    );
 
    if (loading && (!points || points.length === 0)) {
@@ -50,7 +50,7 @@ function StockWatchChart({ points, symbol, currency = "EUR", loading }) {
    if (!points || points.length === 0) {
       return (
          <p className="text-muted small mb-0">
-            Nessun punto disponibile per questo simbolo nel periodo intraday.
+            Nessun dato per il periodo selezionato.
          </p>
       );
    }

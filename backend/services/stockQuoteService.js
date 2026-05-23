@@ -23,8 +23,15 @@ function validateSymbol(symbol) {
    return symbol;
 }
 
-async function fetchYahooChart(symbol, interval = "1m", range = "1d") {
-   const url = `${YAHOO_CHART}/${encodeURIComponent(symbol)}?interval=${interval}&range=${range}`;
+async function fetchYahooChart(symbol, opts = {}) {
+   const interval = opts.interval || "1m";
+   let url = `${YAHOO_CHART}/${encodeURIComponent(symbol)}?interval=${encodeURIComponent(interval)}`;
+   if (opts.period1 != null) {
+      const period2 = opts.period2 ?? Math.floor(Date.now() / 1000);
+      url += `&period1=${opts.period1}&period2=${period2}`;
+   } else {
+      url += `&range=${encodeURIComponent(opts.range || "1d")}`;
+   }
    const res = await fetch(url, {
       headers: {
          "User-Agent": "Mozilla/5.0 (compatible; BudgetApp/1.0)",
@@ -65,8 +72,15 @@ async function getStockQuote(rawSymbol, opts = {}) {
    const symbol = validateSymbol(normalizeSymbol(rawSymbol));
    const interval = opts.interval || "1m";
    const range = opts.range || "1d";
+   const period1 =
+      opts.period1 != null ? Number(opts.period1) : undefined;
 
-   const result = await fetchYahooChart(symbol, interval, range);
+   const result = await fetchYahooChart(symbol, {
+      interval,
+      range,
+      period1,
+      period2: opts.period2,
+   });
    const meta = result.meta || {};
    const points = buildSeries(result);
 

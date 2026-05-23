@@ -4,8 +4,8 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import axios from "axios";
 import { parseISO, getMonth, getYear, getISOWeek } from "date-fns";
+import api from "../lib/api";
 import {
    loadWalletsState,
    saveWalletsState,
@@ -21,8 +21,8 @@ import {
    txKey,
    DEFAULT_WALLET_ID,
 } from "../lib/localFinanceStore";
+import { loadUserProfile, saveUserProfile, applyTheme } from "../lib/userProfileStore";
 
-const BASE_URL = "http://localhost:5000/api/";
 const GlobalContext = createContext();
 
 function transactionMatchesSubmit(row, body) {
@@ -51,25 +51,70 @@ export const GlobalProvider = ({ children }) => {
       loadExpenseBudgetsMonthly()
    );
    const [txWalletMap, setTxWalletMap] = useState(() => loadTxWalletMap());
+   const [userProfile, setUserProfileState] = useState(() => loadUserProfile());
+
+   useEffect(() => {
+      applyTheme(userProfile.theme);
+   }, [userProfile.theme]);
+
+   const displayName =
+      (userProfile.displayName && userProfile.displayName.trim()) ||
+      loggedUser?.name ||
+      "Utente";
+
+   const updateUserProfile = useCallback((partial) => {
+      const next = { ...loadUserProfile(), ...partial };
+      saveUserProfile(next);
+      setUserProfileState(next);
+      if (partial.theme != null) applyTheme(next.theme);
+   }, []);
 
    const syncTxMap = useCallback(() => {
       setTxWalletMap(loadTxWalletMap());
    }, []);
 
    useEffect(() => {
+      let cancelled = false;
+      api
+         .get("sessions/current")
+         .then((res) => {
+            if (cancelled || !res.data?.user_id) return;
+            localStorage.setItem("loggedUser", JSON.stringify(res.data));
+            setLoggedUser(res.data);
+         })
+         .catch(() => {
+            if (cancelled) return;
+            localStorage.removeItem("loggedUser");
+            setLoggedUser({ user_id: 0 });
+         });
+      return () => {
+         cancelled = true;
+      };
+   }, []);
+
+   useEffect(() => {
+      if (!loggedUser?.user_id) {
+         setIncomes([]);
+         setExpenses([]);
+         return;
+      }
       setLoading(true);
-      getIncomes(loggedUser.user_id);
-      getExpenses(loggedUser.user_id);
-      setLoading(false);
-   }, [loggedUser]);
+      Promise.all([getIncomes(loggedUser.user_id), getExpenses(loggedUser.user_id)]).finally(
+         () => setLoading(false)
+      );
+   }, [loggedUser.user_id]);
 
    const getExpenses = async (user_id) => {
       try {
-         const res = await axios.get(`${BASE_URL}expenses/${user_id}`);
+         const res = await api.get(`expenses/${user_id}`);
          setExpenses(res.data);
          return res.data;
       } catch (err) {
          console.error("Error fetching expenses in context:", err);
+         if (err.response?.status === 401) {
+            localStorage.removeItem("loggedUser");
+            setLoggedUser({ user_id: 0 });
+         }
          setError(err);
          return [];
       }
@@ -77,12 +122,15 @@ export const GlobalProvider = ({ children }) => {
 
    const getIncomes = async (user_id) => {
       try {
-         const res = await axios.get(`${BASE_URL}incomes/${user_id}`);
+         const res = await api.get(`incomes/${user_id}`);
          setIncomes(res.data);
          return res.data;
       } catch (err) {
          console.error("Error fetching incomes in context:", err);
-         setError(err);
+         if (err.response?.status === 401) {
+            localStorage.removeItem("loggedUser");
+            setLoggedUser({ user_id: 0 });
+         }
          return [];
       }
    };
@@ -97,9 +145,7 @@ export const GlobalProvider = ({ children }) => {
          description: expense.description,
       };
       try {
-         await axios.post(`${BASE_URL}addExpense`, body).catch((err) => {
-            setError(err.message);
-         });
+         await api.post("addExpense", body);
          const data = await getExpenses(expense.user_id);
          const newest = data.reduce((best, row) => (row.id > (best?.id ?? -1) ? row : best), null);
          if (newest && transactionMatchesSubmit(newest, body)) {
@@ -117,9 +163,7 @@ export const GlobalProvider = ({ children }) => {
 
    const deleteExpense = async (id) => {
       try {
-         await axios.delete(`${BASE_URL}deleteExpense/${id}`).catch((err) => {
-            setError(err.message);
-         });
+         await api.delete(`deleteExpense/${id}`);
          removeWalletIdForTransaction("e", id);
          syncTxMap();
          getExpenses(loggedUser.user_id);
@@ -138,9 +182,7 @@ export const GlobalProvider = ({ children }) => {
          description: income.description,
       };
       try {
-         await axios.post(`${BASE_URL}addIncome`, body).catch((err) => {
-            setError(err.message);
-         });
+         await api.post("addIncome", body);
          const data = await getIncomes(income.user_id);
          const newest = data.reduce((best, row) => (row.id > (best?.id ?? -1) ? row : best), null);
          if (newest && transactionMatchesSubmit(newest, body)) {
@@ -158,9 +200,7 @@ export const GlobalProvider = ({ children }) => {
 
    const deleteIncome = async (id) => {
       try {
-         await axios.delete(`${BASE_URL}deleteIncome/${id}`).catch((err) => {
-            setError(err.message);
-         });
+         await api.delete(`deleteIncome/${id}`);
          removeWalletIdForTransaction("i", id);
          syncTxMap();
          getIncomes(loggedUser.user_id);
@@ -235,7 +275,7 @@ export const GlobalProvider = ({ children }) => {
 
    const doLogin = async (email, password) => {
       try {
-         const res = await axios.post(`${BASE_URL}sessions`, { email, password });
+         const res = await api.post("sessions", { email, password });
          const user = res.data;
          localStorage.setItem("loggedUser", JSON.stringify(user));
          setLoggedUser(user);
@@ -249,14 +289,41 @@ export const GlobalProvider = ({ children }) => {
    };
 
    const doLogout = async () => {
-      await fetch(`${BASE_URL}sessions/current`);
-      setLoggedUser(0);
+      try {
+         await api.delete("sessions/current");
+      } catch (e) {
+         console.error(e);
+      }
+      localStorage.removeItem("loggedUser");
+      setLoggedUser({ user_id: 0 });
+      setIncomes([]);
+      setExpenses([]);
    };
 
    const doRegistration = async (user) => {
-      await axios.post(`${BASE_URL}addUser`, user).catch((err) => {
-         setError(err.message);
+      try {
+         const body = {
+            name: user.name?.trim(),
+            email: user.email?.trim().toLowerCase(),
+            password: user.password,
+         };
+         await api.post("addUser", body);
+      } catch (err) {
+         const msg =
+            err.response?.data?.message ||
+            err.response?.data?.error ||
+            err.message ||
+            "Registrazione non riuscita.";
+         throw new Error(msg);
+      }
+   };
+
+   const checkEmailAvailable = async (email) => {
+      const normalized = String(email || "").trim().toLowerCase();
+      const res = await api.get("users/check-email", {
+         params: { email: normalized },
       });
+      return res.data;
    };
 
    const persistWallets = (next) => {
@@ -363,6 +430,7 @@ export const GlobalProvider = ({ children }) => {
             doLogin,
             doLogout,
             doRegistration,
+            checkEmailAvailable,
             setError,
             error,
             loading,
@@ -383,6 +451,9 @@ export const GlobalProvider = ({ children }) => {
             getWalletLabel,
             getWalletIdForTransaction: (kind, id) => txWalletMap[txKey(kind, id)] ?? null,
             defaultWalletId: DEFAULT_WALLET_ID,
+            userProfile,
+            displayName,
+            updateUserProfile,
          }}
       >
          {children}

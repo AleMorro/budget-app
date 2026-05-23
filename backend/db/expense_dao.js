@@ -57,10 +57,10 @@ exports.addExpense = function(expense) {
  * Post method to add an expense
  * @param {*} id of the transactions to delete
  */
-exports.deleteExpenseById = function(id) {
+exports.deleteExpenseByIdForUser = function(id, userId) {
    return new Promise((resolve, reject) => {
-      const sql = 'DELETE FROM expenses WHERE id = ?';
-      db.run(sql, [id], (err) => {
+      const sql = 'DELETE FROM expenses WHERE id = ? AND user_id = ?';
+      db.run(sql, [id, userId], (err) => {
          if(err) {
             reject(err)
             return

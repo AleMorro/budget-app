@@ -1,0 +1,9 @@
+/* Evidenziazione sezione visibile (scroll spy) — solo titolo card */
+.settings-block.is-active .card-title {
+   color: var(--primary, #4154f1);
+   font-weight: 700;
+}
+
+.settings-block .card-title {
+   transition: color 0.2s, font-weight 0.2s;
+}

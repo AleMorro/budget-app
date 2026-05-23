@@ -18,9 +18,15 @@ import Cashflow from "./components/budgetApp/routes/Wallets/Wallets";
 import PreviousYears from "./components/budgetApp/routes/PreviousYears/PreviousYears";
 import CategorySettings from "./components/budgetApp/routes/CategorySettings/CategorySettings";
 import StockWatch from "./components/budgetApp/routes/StockWatch/StockWatch";
+import SettingsHub from "./components/budgetApp/routes/Settings/SettingsHub";
+import MyProfile from "./components/budgetApp/routes/Profile/MyProfile";
+import AccountSettings from "./components/budgetApp/routes/Profile/AccountSettings";
+import HelpPage from "./components/budgetApp/routes/Help/HelpPage";
+import RequireAuth from "./components/budgetApp/RequireAuth";
 
 // import stylesheet
 import "./App.css"
+import "./styles/darkTheme.css"
 
 function App() {
 
@@ -34,14 +40,18 @@ function App() {
          </Routes>
          
          <Routes>
-            <Route path='/app' element = {<Home />}/>
-            <Route path='/app/expenses' element = {<Expenses />}/>
-            <Route path='/app/incomes' element = {<Incomes />}/>
-            <Route path='/app/category-settings' element = {<CategorySettings />}/>
-            <Route path='/app/budget' element = {<Budget />}/>
-            <Route path='/app/cashflow' element = {<Cashflow />}/>
-            <Route path='/app/previous-years' element = {<PreviousYears />}/>
-            <Route path='/app/stocks' element = {<StockWatch />}/>
+            <Route path='/app' element = {<RequireAuth><Home /></RequireAuth>}/>
+            <Route path='/app/expenses' element = {<RequireAuth><Expenses /></RequireAuth>}/>
+            <Route path='/app/incomes' element = {<RequireAuth><Incomes /></RequireAuth>}/>
+            <Route path='/app/category-settings' element = {<RequireAuth><CategorySettings /></RequireAuth>}/>
+            <Route path='/app/settings' element = {<RequireAuth><SettingsHub /></RequireAuth>}/>
+            <Route path='/app/settings/account' element = {<RequireAuth><AccountSettings /></RequireAuth>}/>
+            <Route path='/app/profile' element = {<RequireAuth><MyProfile /></RequireAuth>}/>
+            <Route path='/app/help' element = {<RequireAuth><HelpPage /></RequireAuth>}/>
+            <Route path='/app/budget' element = {<RequireAuth><Budget /></RequireAuth>}/>
+            <Route path='/app/cashflow' element = {<RequireAuth><Cashflow /></RequireAuth>}/>
+            <Route path='/app/previous-years' element = {<RequireAuth><PreviousYears /></RequireAuth>}/>
+            <Route path='/app/stocks' element = {<RequireAuth><StockWatch /></RequireAuth>}/>
          </Routes>
          
       </BrowserRouter>

@@ -1,246 +1,287 @@
-// imports
-const express = require('express');
-const sqlite = require('sqlite3');
-const morgan = require('morgan');
-const cors = require('cors');
-const incomeDao = require('./db/income_dao');
-const expenseDao = require('./db/expense_dao');
-const userDao = require('./db/users_dao');
-const path = require('path');
+require("dotenv").config();
 
-const passport = require('passport'); // auth middleware
-const LocalStrategy = require('passport-local').Strategy; // email and password for login
-const session = require('express-session');
-const { result } = require('lodash');
+const express = require("express");
+const morgan = require("morgan");
+const cors = require("cors");
+const path = require("path");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+const bcrypt = require("bcrypt");
 
-const {check, validationResult} = require('express-validator');
-const db = require('./db/db');
-const exp = require('constants');
-const { error } = require('console');
-const bcrypt = require('bcrypt')
-const { getStockQuote, getStockQuotesBatch } = require('./services/stockQuoteService');
+const incomeDao = require("./db/income_dao");
+const expenseDao = require("./db/expense_dao");
+const userDao = require("./db/users_dao");
+const { getStockQuote, getStockQuotesBatch } = require("./services/stockQuoteService");
+const {
+   publicUser,
+   isLoggedIn,
+   assertOwnsUserParam,
+   forceSessionUserId,
+} = require("./middleware/auth");
+const { createRateLimiter } = require("./middleware/rateLimit");
 
-// strategy passport configuration
-passport.use(new LocalStrategy(
-   { usernameField: 'email', passwordField: 'password' },
-   function(email, password, done) {
-      userDao.getUser(email).then(user => {
-         if (!user) {
-            return done(null, false, { message: 'Incorrect username' });
-         } 
-         bcrypt.compare(password, user.password, (err, res) => {
-            if (res) {
-                  return done(null, user);
-            } else {
-                  return done(null, false, { message: 'Incorrect password' });
-            }
-         });
-      }).catch(err => done(err));
-   }
-));
+const isProd = process.env.NODE_ENV === "production";
+const PORT = Number(process.env.PORT) || 5000;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+const SESSION_SECRET =
+   process.env.SESSION_SECRET ||
+   (isProd ? null : "dev-only-session-secret-not-for-production");
 
-// serialize and de-serialize the user (user object <-> session)
-passport.serializeUser(function(user, done) {
+if (!SESSION_SECRET) {
+   console.error("FATAL: SESSION_SECRET è obbligatorio in produzione (NODE_ENV=production).");
+   process.exit(1);
+}
+
+const stockRateLimit = createRateLimiter({
+   windowMs: 60_000,
+   max: Number(process.env.STOCK_RATE_LIMIT_MAX) || 30,
+   message: "Limite richieste titoli raggiunto. Riprova tra un minuto.",
+});
+
+passport.use(
+   new LocalStrategy(
+      { usernameField: "email", passwordField: "password" },
+      function (email, password, done) {
+         userDao
+            .getUser(email)
+            .then((user) => {
+               if (!user) {
+                  return done(null, false, { message: "Incorrect username" });
+               }
+               bcrypt.compare(password, user.password, (err, res) => {
+                  if (err) return done(err);
+                  if (res) return done(null, user);
+                  return done(null, false, { message: "Incorrect password" });
+               });
+            })
+            .catch((err) => done(err));
+      }
+   )
+);
+
+passport.serializeUser((user, done) => {
    done(null, user.user_id);
 });
 
-passport.deserializeUser(function(id, done) {
-   userDao.getUserById(id).then(user => {
-      done(null, user);
-   }).catch(err => done(err, null))
+passport.deserializeUser((id, done) => {
+   userDao
+      .getUserById(id)
+      .then((user) => done(null, user))
+      .catch((err) => done(err, null));
 });
 
-// init
 const app = express();
-const PORT = 5000;
 
-// set up the middlewares
-app.use(morgan('tiny'));
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(morgan("tiny"));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json())
-app.use(cors())
-
-// interpreting json-encoded parameters
 app.use(express.json());
+app.use(
+   cors({
+      origin: CORS_ORIGIN,
+      credentials: true,
+   })
+);
 
+app.use(
+   session({
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+         httpOnly: true,
+         secure: isProd,
+         sameSite: isProd ? "strict" : "lax",
+         maxAge: 7 * 24 * 60 * 60 * 1000,
+      },
+   })
+);
 
-// set up the session
-app.use(session({
-   secret: 'a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie',
-   resave: false,
-   saveUninitialized: false,
-   cookie: { sameSite: 'lax' }
-}));
-
-// init passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-const isLoggedIn = (req, res, next) => {
-   if(req.isAuthenticated()){
-      return next();
-   }
-   return res.status(401).json({"statusCode" : 401, "message" : "not authenticated"});
-}
-
 /***
  * REST API
-***/
+ ***/
 
-/************ 
- * GET
-*************/
-
-// get all incomes by id
-app.get('/api/incomes/:id', /*isLoggedIn, */  (req, res) => {
-   incomeDao.getAllIncomes(req.params.id)
-      .then(incomes => res.json(incomes))
-      .catch(error => res.status(500).json({ error: error.message }));
+app.get("/api/sessions/current", isLoggedIn, (req, res) => {
+   res.json(publicUser(req.user));
 });
-// get all expenses by id
-app.get('/api/expenses/:id', /*isLoggedIn, */  (req, res) => {
-   expenseDao.getAllExpenses(req.params.id)
-      .then(expenses => res.json(expenses))
-      .catch(error => res.status(500).json({ error: error.message}));
-})
 
-// batch quotes for portfolio
-app.post('/api/stocks/quotes', async (req, res) => {
+app.post("/api/sessions", (req, res, next) => {
+   passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err);
+      if (!user) return res.status(401).json(info);
+      req.login(user, (loginErr) => {
+         if (loginErr) return next(loginErr);
+         return res.json(publicUser(user));
+      });
+   })(req, res, next);
+});
+
+app.delete("/api/sessions/current", (req, res) => {
+   req.logout((err) => {
+      if (err) return res.status(503).json({ error: err.message });
+      req.session.destroy(() => {
+         res.clearCookie("connect.sid");
+         res.status(204).end();
+      });
+   });
+});
+
+app.get("/api/users/check-email", (req, res) => {
+   const email = String(req.query.email || "")
+      .trim()
+      .toLowerCase();
+   if (!email || !email.includes("@")) {
+      return res.status(400).json({ message: "Email non valida." });
+   }
+   userDao
+      .getUser(email)
+      .then((row) => res.json({ email, available: !row }))
+      .catch((err) => res.status(500).json({ error: err.message }));
+});
+
+app.post("/api/addUser", (req, res) => {
+   const user = {
+      name: String(req.body.name || "").trim(),
+      email: String(req.body.email || "")
+         .trim()
+         .toLowerCase(),
+      password: req.body.password,
+   };
+
+   if (!user.name || !user.email || !user.password) {
+      return res.status(400).json({ message: "Compila tutti i campi obbligatori." });
+   }
+   if (!user.email.includes("@")) {
+      return res.status(400).json({ message: "Inserisci un indirizzo email valido." });
+   }
+
+   userDao
+      .getUser(user.email)
+      .then((existing) => {
+         if (existing) {
+            return res.status(409).json({
+               message:
+                  "Questa email è già registrata. Accedi o usa un'altra email.",
+            });
+         }
+         return userDao
+            .createdUser(user)
+            .then((result) =>
+               res.status(201).header("Location", `/addUser/${result}`).end()
+            );
+      })
+      .catch((err) => res.status(503).json({ error: err.message }));
+});
+
+app.get(
+   "/api/incomes/:id",
+   isLoggedIn,
+   assertOwnsUserParam("id"),
+   (req, res) => {
+      incomeDao
+         .getAllIncomes(req.user.user_id)
+         .then((incomes) => res.json(incomes))
+         .catch((error) => res.status(500).json({ error: error.message }));
+   }
+);
+
+app.get(
+   "/api/expenses/:id",
+   isLoggedIn,
+   assertOwnsUserParam("id"),
+   (req, res) => {
+      expenseDao
+         .getAllExpenses(req.user.user_id)
+         .then((expenses) => res.json(expenses))
+         .catch((error) => res.status(500).json({ error: error.message }));
+   }
+);
+
+app.post("/api/addIncome", isLoggedIn, forceSessionUserId, (req, res) => {
+   const income = {
+      user_id: req.body.user_id,
+      category: req.body.category,
+      date: req.body.date,
+      description: req.body.description,
+      amount: req.body.amount,
+   };
+
+   incomeDao
+      .addIncome(income)
+      .then((result) => res.status(201).header("Location", `/incomes/${result}`).end())
+      .catch((err) => res.status(503).json({ error: err.message }));
+});
+
+app.post("/api/addExpense", isLoggedIn, forceSessionUserId, (req, res) => {
+   const expense = {
+      user_id: req.body.user_id,
+      category: req.body.category,
+      date: req.body.date,
+      description: req.body.description,
+      amount: req.body.amount,
+   };
+
+   expenseDao
+      .addExpense(expense)
+      .then((result) => res.status(201).header("Location", `/expenses/${result}`).end())
+      .catch((err) => res.status(503).json({ error: err.message }));
+});
+
+app.delete("/api/deleteIncome/:id", isLoggedIn, (req, res) => {
+   incomeDao
+      .deleteIncomeByIdForUser(req.params.id, req.user.user_id)
+      .then((changes) => {
+         if (changes === 0) {
+            return res.status(404).json({ error: "Income not found" });
+         }
+         res.status(200).json({ message: "Income deleted successfully" });
+      })
+      .catch((error) => res.status(500).json({ error: error.message }));
+});
+
+app.delete("/api/deleteExpense/:id", isLoggedIn, (req, res) => {
+   expenseDao
+      .deleteExpenseByIdForUser(req.params.id, req.user.user_id)
+      .then((changes) => {
+         if (changes === 0) {
+            return res.status(404).json({ error: "Expense not found" });
+         }
+         res.status(200).json({ message: "Expense deleted successfully" });
+      })
+      .catch((error) => res.status(500).json({ error: error.message }));
+});
+
+app.post("/api/stocks/quotes", isLoggedIn, stockRateLimit, async (req, res) => {
    try {
       const symbols = req.body?.symbols || [];
       const data = await getStockQuotesBatch(symbols);
       res.json(data);
    } catch (err) {
       const status = err.status || 500;
-      res.status(status).json({ error: err.message || 'Errore recupero titoli' });
+      res.status(status).json({ error: err.message || "Errore recupero titoli" });
    }
 });
 
-// quote + intraday chart (Yahoo Finance proxy)
-app.get('/api/stocks/:symbol', async (req, res) => {
+app.get("/api/stocks/:symbol", isLoggedIn, stockRateLimit, async (req, res) => {
    try {
-      const interval = req.query.interval || '1m';
-      const range = req.query.range || '1d';
-      const data = await getStockQuote(req.params.symbol, { interval, range });
+      const interval = req.query.interval || "1m";
+      const range = req.query.range || "1d";
+      const period1 = req.query.period1 ? Number(req.query.period1) : undefined;
+      const data = await getStockQuote(req.params.symbol, { interval, range, period1 });
       res.json(data);
    } catch (err) {
       const status = err.status || 500;
-      res.status(status).json({ error: err.message || 'Errore recupero titolo' });
+      res.status(status).json({ error: err.message || "Errore recupero titolo" });
    }
 });
 
-/************ 
- * POST
-*************/
-
-// post an income
-app.post('/api/addIncome', /*isLoggedIn,*/ (req, res) => {
-   const income = {
-      user_id: req.body.user_id,
-      category: req.body.category,
-      date: req.body.date,
-      description: req.body.description,
-      amount: req.body.amount
-   };
-   
-   incomeDao.addIncome(income)
-   .then((result) => res.status(201).header('Location', `/incomes/${result}`).end())
-   .catch((err) => res.status(503).json({error: err.message}));
-});
-
-// post an expense
-app.post('/api/addExpense', /*isLoggedIn,*/ (req, res) => {
-   const expense = {
-     user_id: req.body.user_id,
-     category: req.body.category,
-     date: req.body.date,
-     description: req.body.description,
-     amount: req.body.amount
-   };
-
-   expenseDao.addExpense(expense)
-   .then((result) => res.status(201).header('Location', `/expenses/${result}`).end())
-   .catch((err) => res.status(503).json({error: err.message}));
-});
-
-/************ 
- * DELETE
-*************/
-
-// delete an income
-app.delete('/api/deleteIncome/:id', /*isLoggedIn*/ (req, res) => {
-   incomeDao.deleteIncomeById(req.params.id)
-      .then(changes => {
-         if (changes === 0) {
-            res.status(404).json({ error: 'Income not found' }); // Nessuna riga eliminata
-         } else {
-            res.status(200).json({ message: 'Income deleted successfully' }); // Eliminazione riuscita
-         }
-      })
-      .catch(error => res.status(500).json({ error: error.message }));
-});
-
-// delete an expense
-app.delete('/api/deleteExpense/:id', /*isLoggedIn*/ (req, res) => {
-   expenseDao.deleteExpenseById(req.params.id)
-      .then(changes => {
-         if (changes === 0) {
-            res.status(404).json({ error: 'Expense not found' }); // Nessuna riga eliminata
-         } else {
-            res.status(200).json({ message: 'Expense deleted successfully' }); // Eliminazione riuscita
-         }
-      })
-      .catch(error => res.status(500).json({ error: error.message }));
-});
-
-/************ 
- * SESSIONS
-*************/
-
-// login
-app.post('/api/sessions', function(req, res, next) {
-   console.log(`Received login request: ${JSON.stringify(req.body)}`); // Log dei dati ricevuti
-   passport.authenticate('local', function(err, user, info) {
-      if (err) { return next(err); }
-      if (!user) {
-         return res.status(401).json(info);
-      }
-      req.login(user, function(err) {
-         if (err) { return next(err); }
-         return res.json(user);
-      });
-   })(req, res, next);
-});
-
-// logout
-app.delete('/api/sessions/current', function(req, res){
-   req.logout(function(err) {
-      if (err) { return res.status(503).json(err); }
-   });
-   res.end();
-});
-
-// POST /users
-
-// sign up
-app.post('/api/addUser', /* isLoggedIn, */ (req, res) => {
-   
-   const user = {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password
-   };
-
-   console.log(`Registration submitted with name: ${user.name}, email: ${user.email} and password: ${user.password}`);
-
-   userDao.createdUser(user)
-   .then((result) => res.status(201).header('Location', `/addUser/${result}`).end())
-   .catch((err) => res.status(503).json({error: err.message}));
-});
-
-
-// Check if the server is connected
 app.listen(PORT, () => {
-   console.log(`server listening at http://localhost:${PORT}`)
+   console.log(`server listening at http://localhost:${PORT}`);
+   if (!isProd) {
+      console.log(`CORS origin: ${CORS_ORIGIN}`);
+   }
 });
