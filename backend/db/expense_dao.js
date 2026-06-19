@@ -41,12 +41,12 @@ exports.getAllExpenses = function(id) {
 exports.addExpense = function(expense) {
    return new Promise((resolve,reject) => {
    const sql = "INSERT INTO expenses(user_id, category, date, description, amount) VALUES (?, ?, DATE(?), ?, ?)";
-      db.run(sql, [expense.user_id,expense.category,expense.date,expense.description,expense.amount], (err)=> {
+      db.run(sql, [expense.user_id,expense.category,expense.date,expense.description,expense.amount], function (err) {
           if (err) {
               reject(err);
               return;
           }
-          resolve(this.lastId);
+          resolve(this.lastID);
       });
   });
 } 
@@ -60,7 +60,7 @@ exports.addExpense = function(expense) {
 exports.deleteExpenseByIdForUser = function(id, userId) {
    return new Promise((resolve, reject) => {
       const sql = 'DELETE FROM expenses WHERE id = ? AND user_id = ?';
-      db.run(sql, [id, userId], (err) => {
+      db.run(sql, [id, userId], function (err) {
          if(err) {
             reject(err)
             return
