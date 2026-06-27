@@ -40,12 +40,12 @@ exports.getAllIncomes = function(id) {
 exports.addIncome = function(income) {
    return new Promise((resolve,reject) => {
    const sql = "INSERT INTO incomes(user_id, category, date, description, amount) VALUES (?, ?, DATE(?), ?, ?)";
-   db.run(sql, [income.user_id,income.category,income.date,income.description,income.amount], (err)=> {
+   db.run(sql, [income.user_id,income.category,income.date,income.description,income.amount], function (err) {
       if (err) {
          reject(err);
          return;
       }
-      resolve(this.lastId);
+      resolve(this.lastID);
    });
    });
 }
@@ -59,7 +59,7 @@ exports.addIncome = function(income) {
 exports.deleteIncomeByIdForUser = function(id, userId) {
    return new Promise((resolve, reject) => {
       const sql = 'DELETE FROM incomes WHERE id = ? AND user_id = ?';
-      db.run(sql, [id, userId], (err) => {
+      db.run(sql, [id, userId], function (err) {
          if(err) {
             reject(err)
             return

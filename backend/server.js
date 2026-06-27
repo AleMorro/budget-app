@@ -33,10 +33,33 @@ if (!SESSION_SECRET) {
    process.exit(1);
 }
 
+const LOGIN_FAILURE_MESSAGE = "Email o password non corretti.";
+
+const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 128;
+
 const stockRateLimit = createRateLimiter({
    windowMs: 60_000,
    max: Number(process.env.STOCK_RATE_LIMIT_MAX) || 30,
    message: "Limite richieste titoli raggiunto. Riprova tra un minuto.",
+});
+
+const loginRateLimit = createRateLimiter({
+   windowMs: 60_000,
+   max: Number(process.env.LOGIN_RATE_LIMIT_MAX) || 10,
+   message: "Troppi tentativi di accesso. Riprova tra un minuto.",
+});
+
+const registrationRateLimit = createRateLimiter({
+   windowMs: 60_000,
+   max: Number(process.env.REGISTRATION_RATE_LIMIT_MAX) || 5,
+   message: "Troppe registrazioni da questo indirizzo. Riprova tra un minuto.",
+});
+
+const emailCheckRateLimit = createRateLimiter({
+   windowMs: 60_000,
+   max: Number(process.env.EMAIL_CHECK_RATE_LIMIT_MAX) || 20,
+   message: "Troppe verifiche email. Riprova tra un minuto.",
 });
 
 passport.use(
@@ -47,12 +70,12 @@ passport.use(
             .getUser(email)
             .then((user) => {
                if (!user) {
-                  return done(null, false, { message: "Incorrect username" });
+                  return done(null, false, { message: LOGIN_FAILURE_MESSAGE });
                }
                bcrypt.compare(password, user.password, (err, res) => {
                   if (err) return done(err);
                   if (res) return done(null, user);
-                  return done(null, false, { message: "Incorrect password" });
+                  return done(null, false, { message: LOGIN_FAILURE_MESSAGE });
                });
             })
             .catch((err) => done(err));
@@ -109,7 +132,7 @@ app.get("/api/sessions/current", isLoggedIn, (req, res) => {
    res.json(publicUser(req.user));
 });
 
-app.post("/api/sessions", (req, res, next) => {
+app.post("/api/sessions", loginRateLimit, (req, res, next) => {
    passport.authenticate("local", (err, user, info) => {
       if (err) return next(err);
       if (!user) return res.status(401).json(info);
@@ -130,7 +153,7 @@ app.delete("/api/sessions/current", (req, res) => {
    });
 });
 
-app.get("/api/users/check-email", (req, res) => {
+app.get("/api/users/check-email", emailCheckRateLimit, (req, res) => {
    const email = String(req.query.email || "")
       .trim()
       .toLowerCase();
@@ -143,13 +166,13 @@ app.get("/api/users/check-email", (req, res) => {
       .catch((err) => res.status(500).json({ error: err.message }));
 });
 
-app.post("/api/addUser", (req, res) => {
+app.post("/api/addUser", registrationRateLimit, (req, res) => {
    const user = {
       name: String(req.body.name || "").trim(),
       email: String(req.body.email || "")
          .trim()
          .toLowerCase(),
-      password: req.body.password,
+      password: String(req.body.password || ""),
    };
 
    if (!user.name || !user.email || !user.password) {
@@ -157,6 +180,14 @@ app.post("/api/addUser", (req, res) => {
    }
    if (!user.email.includes("@")) {
       return res.status(400).json({ message: "Inserisci un indirizzo email valido." });
+   }
+   if (
+      user.password.length < MIN_PASSWORD_LENGTH ||
+      user.password.length > MAX_PASSWORD_LENGTH
+   ) {
+      return res.status(400).json({
+         message: `La password deve avere tra ${MIN_PASSWORD_LENGTH} e ${MAX_PASSWORD_LENGTH} caratteri.`,
+      });
    }
 
    userDao
